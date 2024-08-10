@@ -1,0 +1,262 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    direction: rtl; /* יישור לימין */
+}
+nav {
+    background-color: #2e88ac; /* צבע חדש ל-navbar */
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+nav ul li {
+    margin-right: 1rem;
+}
+
+nav ul li a {
+    color: rgb(6, 6, 6); /* צבע טקסט לקישורים */
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    display: inline-block; /* Ensure link size includes padding */
+    font-family: 'Times New Roman', serif; /* שינוי גופן */
+    font-size: 33px; /* שינוי גודל טקסט */
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    /*text-decoration: underline;*/
+}
+
+nav ul li a.active-link {
+    background-color: #2e88ac; /* צבע רקע לקישור פעיל */
+    color: white; /* צבע טקסט לקישור פעיל */
+}
+
+.logo {
+    height: 70px; /* גובה חדש ללוגו */
+    width: auto; /* שמירה על פרופורציות */
+    margin-right: 1rem;
+}
+.welcome-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+}
+h1 {
+    color: #d32f2f;
+    font-size: 2em;
+}
+h2 {
+    color:  #2e88ac; /* צבע חדש לכותרות */
+    text-align: right; /* יישור לימין */
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 15rem 0;
+    flex-wrap: wrap;
+}
+
+.page-button {
+    border: 6px solid  #2e88ac;
+    border-radius: 30px;
+    padding: 1rem;
+    text-align: center;
+    width: 300px;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-size:xx-large;
+    color: #d32f2f;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.page-button .main-link {
+    text-decoration: none;
+    color:  #2e88ac;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.page-button .sub-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.page-button .sub-links a {
+    text-decoration: none;
+    color:  #2e88ac;
+    font-weight: normal;
+}
+
+.page-button .sub-links a:hover {
+    color:  #2e88ac;
+}
+
+.page-button:hover {
+    background-color:  #2e88ac;
+    color: #fff;
+    transform: translateY(-5px);
+}
+
+.page-button:hover .main-link,
+.page-button:hover .sub-links a {
+    color: #fff;
+}
+
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    text-align: right; /* יישור לימין */
+}
+
+form {
+    background-color: white;
+    padding: 2rem;
+    margin: 2rem 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+    text-align: right; /* יישור לימין */
+}
+
+form div {
+    margin-bottom: 1rem;
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+form input, form select, form button {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #daced0;
+    border-radius: 0.25rem;
+    text-align: right; /* יישור לימין */
+}
+
+form button {
+    background-color: #2e88ac; /* צבע חדש לכפתורים */
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+form button:hover {
+   /* צבע חדש לכפתורים בזמן ריחוף */
+    background-color: #000000; 
+    color: white; /* צבע טקסט לקישור פעיל */
+}
+
+ul {
+    padding: -2rem;
+    list-style-type: none;
+}
+
+ul li {
+    
+    padding: -1rem;
+    margin-bottom: 0rem;
+    border-radius: 0.25rem;
+}
+
+ul li p {
+    margin: -1rem;
+    text-align: right; /* יישור לימין */
+}
+
+/* Media Query לשינוי גודל הגופן על מסכים קטנים */
+@media (max-width: 768px) {
+    nav ul li a {
+        font-size: 20px; /* שינוי גודל טקסט */
+    }
+
+    .logo {
+        height: 50px; /* גובה חדש ללוגו */
+    }
+}
+
+@media (max-width: 480px) {
+    nav ul li a {
+        font-size: 16px; /* שינוי גודל טקסט נוסף למסכים קטנים מאוד */
+    }
+
+    .logo {
+        height: 40px; /* גובה נוסף ללוגו למסכים קטנים מאוד */
+    }
+}
+.message {
+    font-weight: bold;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    text-align: right;
+    display: flex;
+ }
+
+.message.success {
+    color: green;
+}
+
+.message.error {
+    color: red;
+}
+
+.message svg {
+    margin-right: 10px; /* רווח בין האייקון לטקסט */
+}
+.donors-container {
+    background-color: #ffffff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
+    text-align: right; /* יישור לימין */
+}
+
+.donors-container ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.donor-item {
+    border-bottom: 1px solid #daced0;
+    padding: 0.5rem 0;
+}
+
+.donor-details {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.donor-details li {
+    margin-bottom: 0.5rem;
+}
+
+.donor-details li:last-child {
+    margin-bottom: 0;
+}
