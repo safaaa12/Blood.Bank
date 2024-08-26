@@ -3,22 +3,20 @@ import { BrowserRouter as Router, Route, Routes, NavLink } from 'react-router-do
 import AddDonation from './components/AddDonation';
 import DispenseBlood from './components/DispenseBlood';
 import EmergencyDispense from './components/EmergencyDispense';
-import HomePage from './components/HomePage'; // ייבוא הקומפוננטה החדשה
+import HomePage from './components/HomePage';
+import "./App.css";
+
 function App() {
     return (
         <Router>
-            <div>
-                <nav>
+            <div className="app-container">
+                <nav className="main-nav">
+
                     <ul>
-                    <li>
-                            <NavLink to="/" title="עמוד הבית">
-                                <img src='/bdrop.png' alt="Logo" className="logo" />
-                            </NavLink>
+                        <li>
+                            <NavLink to="/" className={({ isActive }) => isActive ? 'active-link' : ''}>דף הבית</NavLink>
                         </li>
-                        {/* <li>
-                            <NavLink to="/" className={({ isActive }) => isActive ? 'active-link' : ''}>בית</NavLink>
-                        </li>
-                      <li>
+                        <li>
                             <NavLink to="/add-donation" className={({ isActive }) => isActive ? 'active-link' : ''}>הוסף תרומה</NavLink>
                         </li>
                         <li>
@@ -26,19 +24,19 @@ function App() {
                         </li>
                         <li>
                             <NavLink to="/emergency-dispense" className={({ isActive }) => isActive ? 'active-link' : ''}>ניפוק חירום</NavLink>
-                        </li> */}
-                    </ul>
-                <h1>ברוכים הבאים למערכת ניהול בנק הדם</h1>
+                        </li>
+                    </ul> 
+                    <img src='/bdrop.png' alt="Logo" className="logo" />
                 </nav>
 
-                <div className="container">
+                <main className="container">
                     <Routes>
                         <Route path="/add-donation" element={<AddDonation />} />
                         <Route path="/dispense-blood" element={<DispenseBlood />} />
                         <Route path="/emergency-dispense" element={<EmergencyDispense />} />
                         <Route path="/" element={<HomePage />} />
                     </Routes>
-                </div>
+                </main>
             </div>
         </Router>
     );
