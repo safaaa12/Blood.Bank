@@ -1,105 +1,38 @@
-/* General styling for the app container */
-.app-container {
-  display: flex;
-  flex-direction: column; /* Stack items vertically */
-  align-items: center; /* Center items horizontally */
-  text-align: center; /* Center text inside the container */
-  padding: 0 2rem; /* Padding to ensure the content does not touch the edges */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-  margin-top: 120px; /* Add margin to prevent content from hiding behind the fixed nav */
+.App {
+  text-align: center;
 }
 
-/* Styling for the logo */
-.logo {
-  height: 120px;
-  width: 140px;
+.App-logo {
+  height: 40vmin;
   pointer-events: none;
 }
 
-/* Navigation styling */
-.main-nav {
-  position: fixed; /* Fixed positioning to keep the nav at the top */
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%); /* Center the nav horizontally */
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
   display: flex;
-  justify-content: space-between; /* Space between the logo and navigation links */
+  flex-direction: column;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: #ffffff; /* Background color of the nav bar */
-  border-bottom: 1px solid #ddd; /* Adds a subtle border for a clean look */
-  z-index: 1000; /* Ensure the nav stays above other content */
-  width: 100%;
-  max-width: 1200px; /* Increased max width to make the navigation wider */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
 }
 
-/* Navigation links styling */
-.main-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  align-items: center;
+.App-link {
+  color: #61dafb;
 }
 
-.main-nav li {
-  margin-left: 20px; /* Spacing between the list items, changed to margin-left */
-}
-
-.main-nav a {
-  color: #000000; /* Default link color */
-  text-decoration: none;
-  font-size: 1rem; /* Font size for readability */
-  transition: color 0.3s ease; /* Smooth transition for hover effect */
-  padding: 0.5rem 1rem; /* Padding for better clickability */
-  border-radius: 4px; /* Rounds the corners slightly */
-  font-family: Arial, sans-serif; /* Update font for better readability */
-}
-
-.main-nav a.active-link {
-  font-weight: bold;
-  color: rgb(180, 23, 23); /* Active link color */
-}
-
-.main-nav a:hover {
-  color: rgb(180, 23, 23); /* Hover color */
-  background-color: #f0f0f0; /* Light background color on hover for better visibility */
-}
-
-/* Styling for the main content area */
-.container {
-  width: 100%; /* Full width for the main content */
-  max-width: 1200px; /* Increased max width to make the content wider */
-  padding: 2rem 0; /* Padding for the main content area */
-  text-align: center; /* Center text inside the container */
-  font-family: Arial, sans-serif; /* Update font for better readability */
-}
-
-/* Responsive styling for smaller screens */
-@media (max-width: 768px) {
-  .main-nav {
-    flex-direction: column; /* Stack nav items vertically */
-    align-items: center; /* Center items on smaller screens */
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
   }
-
-  .main-nav ul {
-    flex-direction: column; /* Stack links vertically */
-    width: 100%; /* Full width for the ul element */
-    margin-top: 1rem; /* Margin for spacing */
-  }
-
-  .main-nav li {
-    margin-left: 0; /* Remove left margin for vertical layout */
-    margin-bottom: 10px; /* Add bottom margin for spacing */
-  }
-
-  .logo {
-    align-self: center; /* Center the logo on smaller screens */
-    margin-bottom: 10px; /* Add margin below the logo */
-  }
-
-  .app-container {
-    margin-top: 160px; /* Adjust margin for mobile to prevent overlap with the nav */
+  to {
+    transform: rotate(360deg);
   }
 }
