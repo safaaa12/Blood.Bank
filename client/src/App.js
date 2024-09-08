@@ -1,24 +1,34 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, NavLink, Navigate } from 'react-router-dom';
 import AddDonation from './components/AddDonation';
 import DispenseBlood from './components/DispenseBlood';
 import EmergencyDispense from './components/EmergencyDispense';
-import HomePage from './components/HomePage'; // ייבוא הקומפוננטה החדשה
+import HomePage from './components/HomePage';
+import LoginPage from './components/LoginPage';
+import SignUpPage from './components/SignUpPage';
+import './App.css';
+
 function App() {
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+
+    const handleLogin = () => {
+        setIsLoggedIn(true);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setIsLoggedIn(false);
+    };
+
     return (
         <Router>
-            <div>
-                <nav>
+            <div className="app-container">
+                <nav className="main-nav">
                     <ul>
-                    <li>
-                            <NavLink to="/" title="עמוד הבית">
-                                <img src='/bdrop.png' alt="Logo" className="logo" />
-                            </NavLink>
+                        <li>
+                            <NavLink to="/" className={({ isActive }) => isActive ? 'active-link' : ''}>דף הבית</NavLink>
                         </li>
-                        {/* <li>
-                            <NavLink to="/" className={({ isActive }) => isActive ? 'active-link' : ''}>בית</NavLink>
-                        </li>
-                      <li>
+                        <li>
                             <NavLink to="/add-donation" className={({ isActive }) => isActive ? 'active-link' : ''}>הוסף תרומה</NavLink>
                         </li>
                         <li>
@@ -26,19 +36,35 @@ function App() {
                         </li>
                         <li>
                             <NavLink to="/emergency-dispense" className={({ isActive }) => isActive ? 'active-link' : ''}>ניפוק חירום</NavLink>
-                        </li> */}
+                        </li>
+                        {isLoggedIn ? (
+                            <li>
+                                <button onClick={handleLogout} className="btn">התנתק</button>
+                            </li>
+                        ) : (
+                            <>
+                                <li>
+                                    <NavLink to="/login" className={({ isActive }) => isActive ? 'active-link' : ''}>התחברות</NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/signup" className={({ isActive }) => isActive ? 'active-link' : ''}>הרשמה</NavLink>
+                                </li>
+                            </>
+                        )}
                     </ul>
-                <h1>ברוכים הבאים למערכת ניהול בנק הדם</h1>
+                    <img src='/bdrop.png' alt="Logo" className="logo" />
                 </nav>
 
-                <div className="container">
+                <main className="container">
                     <Routes>
-                        <Route path="/add-donation" element={<AddDonation />} />
-                        <Route path="/dispense-blood" element={<DispenseBlood />} />
-                        <Route path="/emergency-dispense" element={<EmergencyDispense />} />
-                        <Route path="/" element={<HomePage />} />
+                        <Route path="/" element={isLoggedIn ? <HomePage /> : <Navigate to="/login" />} />
+                        <Route path="/add-donation" element={isLoggedIn ? <AddDonation /> : <Navigate to="/login" />} />
+                        <Route path="/dispense-blood" element={isLoggedIn ? <DispenseBlood /> : <Navigate to="/login" />} />
+                        <Route path="/emergency-dispense" element={isLoggedIn ? <EmergencyDispense /> : <Navigate to="/login" />} />
+                        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+                        <Route path="/signup" element={<SignUpPage />} />
                     </Routes>
-                </div>
+                </main>
             </div>
         </Router>
     );
