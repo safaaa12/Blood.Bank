@@ -24,35 +24,23 @@ function App() {
         <Router>
             <div className="app-container">
                 <nav className="main-nav">
-                    <ul>
-                        <li>
-                            <NavLink to="/" className={({ isActive }) => isActive ? 'active-link' : ''}>דף הבית</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/add-donation" className={({ isActive }) => isActive ? 'active-link' : ''}>הוסף תרומה</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/dispense-blood" className={({ isActive }) => isActive ? 'active-link' : ''}>ניפוק דם</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/emergency-dispense" className={({ isActive }) => isActive ? 'active-link' : ''}>ניפוק חירום</NavLink>
-                        </li>
+                    <div className="logo-container">
+                        <img src='/bdrop.png' alt="Logo" className="logo" />
+                    </div>
+                    <ul className="nav-links">
                         {isLoggedIn ? (
                             <li>
-                                <button onClick={handleLogout} className="btn">התנתק</button>
+                                <button onClick={handleLogout} className="btn logout-btn">
+                                    <i className="fas fa-sign-out-alt"></i> התנתק
+                                </button>
                             </li>
                         ) : (
                             <>
-                                <li>
-                                    <NavLink to="/login" className={({ isActive }) => isActive ? 'active-link' : ''}>התחברות</NavLink>
-                                </li>
-                                <li>
-                                    <NavLink to="/signup" className={({ isActive }) => isActive ? 'active-link' : ''}>הרשמה</NavLink>
-                                </li>
+                                <NavLink to="/login" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>  היכנס</NavLink>
+                                <NavLink to="/signup" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}> הרשמה</NavLink>
                             </>
                         )}
                     </ul>
-                    <img src='/bdrop.png' alt="Logo" className="logo" />
                 </nav>
 
                 <main className="container">
@@ -65,6 +53,14 @@ function App() {
                         <Route path="/signup" element={<SignUpPage />} />
                     </Routes>
                 </main>
+
+                {/* Footer Section */}
+                <footer className="footer">
+                    <p>© 2024 Blood Donation Management. All rights reserved</p>
+                    <p>
+                        <a href="/terms">Terms of Service</a> | <a href="/privacy">Privacy Policy</a>
+                    </p>
+                </footer>
             </div>
         </Router>
     );

@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true,
-        enum: ['user', 'admin']
+        enum: ['user', 'admin','student']
     }
 });
 
@@ -57,7 +57,7 @@ const validateUser = (data) => {
         username: Joi.string()
             .required()
             .label("Username"),
-        role: Joi.string().valid('user', 'admin').required().label("Role")
+        role: Joi.string().valid('user', 'admin','student').required().label("Role")
     });
     return schema.validate(data);
 };

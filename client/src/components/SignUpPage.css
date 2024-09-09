@@ -1,68 +1,113 @@
+/* General styling for the sign-up page */
 .sign-up-page {
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align content to the top */
+    height: 75vh; /* Reduced height */
+    background: linear-gradient(to right, #16a9d6, #ed1c24); /* Gradient background */
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.signup {
+    color: #fff;
+    font-size:xxx-large;
     text-align: center;
+    font-weight: 600px;
+    font-family: 'Times New Roman', Times, serif;
 }
 
-h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
+/* Styling for error messages */
+.error-message {
+    color: #ed1c24;
+    font-weight: bold;
+    margin-bottom: 10px; /* Reduce margin for compact layout */
+    text-align: center;
+    background-color: #ffe6e6;
+    padding: 8px; /* Smaller padding for a compact design */
+    border-radius: 4px;
 }
 
+/* Form container */
+form {
+    margin-top: -10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    max-width: 350px; /* Make form slightly narrower */
+    width: 100%;
+    transition: transform 0.3s ease-in-out; /* Smooth transition for hover effect */
+}
+
+/* Reduce hover effect to keep form subtle */
+form:hover {
+    transform: translateY(-3px);
+}
+
+/* Form group styling */
 .form-group {
-    margin-bottom: 15px;
-    text-align: right; /* Align labels to the right for Hebrew */
+    margin-bottom: 15px; /* Reduce margin between form elements */
 }
 
-label {
+.form-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     font-size: 14px;
     color: #555;
+    font-weight: 500;
 }
 
-input, select {
+.form-group input,
+.form-group select {
     width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
+    padding: 10px; /* Slightly reduce padding */
     font-size: 16px;
-    color: white;
-    background-color: #28a745;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Input focus state */
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #16a9d6;
+    box-shadow: 0 0 4px rgba(22, 169, 214, 0.4); /* Slightly reduce glow effect */
+    outline: none;
+}
+
+/* Button styling */
+.btn {
+    background-color: #16a9d6;
+    color: #fff;
+    padding: 10px; /* Reduce padding for compact button */
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-button:hover {
-    background-color: #218838;
+.btn:hover {
+    background-color: #1282a3;
+    transform: translateY(-2px); /* Subtle lift effect */
 }
 
-.error-message {
-    color: red;
-    margin-bottom: 10px;
-    font-size: 14px;
-}
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+    .sign-up-page {
+        padding: 10px;
+        margin-top: 20px; /* Reduce space from the top on mobile */
+    }
 
-input[type="email"],
-input[type="password"],
-input[type="text"] {
-    direction: rtl; /* Ensures right-to-left input direction */
-}
+    form {
+        padding: 15px; /* Reduce form padding on mobile */
+    }
 
-select {
-    direction: rtl; /* Ensures right-to-left selection */
+    h2 {
+        font-size: 22px; /* Slightly smaller heading for mobile */
+    }
 }

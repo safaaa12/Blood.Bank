@@ -1,38 +1,144 @@
-.App {
+/* General App Container */
+.app-container {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Main Navigation */
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 10px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo Container */
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Logo Style */
+.logo {
+  height: 100px;
+  width: auto;
+}
+
+/* Navigation Links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Active Link Style */
+.active-link {
+  background-color: #074356;  /* Darker blue background for active link */
+  color: #ffffff;             /* White text for contrast */
+  font-weight: bold;          /* Bold text to make the active link stand out */
+  padding: 10px 20px;         /* Padding to ensure the button-like appearance */
+  border-radius: 4px;         /* Rounded corners for a modern look */
+  text-decoration:none;   /* Remove underline */
+  font-size: 20px;
+}
+
+.nav-links li {
+  margin-left: 20px;
+}
+
+/* Style for Login and Sign Up Buttons */
+.nav-link {
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #16a9d6;
+  font-weight: bold;  
+  padding: 10px 20px;
+  border-radius: 4px;
+  margin-right: 10px;  
+  margin-left: 10px;
+  font-size: 20px;
+}
+
+.active-link:hover{
+  background-color:  #074356;
+} .nav-link:hover {
+  background-color:  #074356;
+}
+
+/* Logout Button */
+.btn.logout-btn {
+  display: flex;
+  align-items: center;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin-right: 10px;  
+  margin-left: 10px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.btn.logout-btn:hover {
+  background-color: #d32f2f;
+}
+
+.btn.logout-btn i {
+  margin-right: 8px;
+}
+
+/* Main Content Container */
+.container {
+  padding: 20px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+/* Responsive Design for Mobile */
+@media (max-width: 768px) {
+  .main-nav {
+      flex-direction: column;
+      align-items: flex-start;
+  }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+  .nav-links {
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+  }
+
+  .nav-links li {
+      margin-left: 0;
+      margin-bottom: 10px;
   }
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.footer {
+  background-color: #f8f9fa;
+  padding: 10px 0;
+  text-align: center;
+  border-top: 1px solid #ddd;
 }
 
-.App-link {
-  color: #61dafb;
+.footer p {
+  margin: 0;
+  color: #333;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.footer a {
+  color: #16a9d6;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+.footer a:hover {
+  text-decoration: underline;
 }

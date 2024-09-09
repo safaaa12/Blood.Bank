@@ -1,0 +1,37 @@
+.admin-page {
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+}
+
+.user-management, .user-list, .metadata-section {
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.btn-create {
+    background-color: #16a9d6;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-create:hover {
+    background-color: #1282a3;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+li {
+    margin: 5px 0;
+}

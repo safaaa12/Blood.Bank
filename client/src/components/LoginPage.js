@@ -23,7 +23,7 @@ function LoginPage({ onLogin }) {
 
     return (
         <div className="login-page">
-            <h2>התחברות</h2>
+            <h2 className='login'>התחברות</h2>
             {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">

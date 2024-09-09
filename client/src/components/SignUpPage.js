@@ -55,7 +55,7 @@ function SignUpPage() {
 
     return (
         <div className="sign-up-page">
-            <h2>הרשמה</h2>
+            <h2 className='signup'>הרשמה</h2>
             {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
