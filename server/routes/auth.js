@@ -62,6 +62,23 @@ router.post('/login', async (req, res) => {
       res.status(500).json({ message: 'Server error' });
   }
 });
+// In your auth.js or user.js (or similar file)
+router.get('/user/email/:email', async (req, res) => {
+    const userEmail = decodeURIComponent(req.params.email);
+
+    try {
+        const user = await User.findOne({ email: userEmail });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        console.log('Found user:', user); // בדוק את המשתמש שנמצא במסד הנתונים
+        res.status(200).json({ role: user.role }); // שלח את התפקיד
+    } catch (error) {
+        console.error('Error fetching user by email:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 
 module.exports = router;
