@@ -13,6 +13,8 @@ function LoginPage({ onLogin }) {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:3001/api/auth/login', { email, password });
+            localStorage.setItem('email', email); // Store email in localStorage
+
             localStorage.setItem('token', response.data.token);
             onLogin();
             navigate('/');

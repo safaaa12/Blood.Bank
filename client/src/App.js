@@ -6,6 +6,8 @@ import EmergencyDispense from './components/EmergencyDispense';
 import HomePage from './components/HomePage';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
+import ResearchDataPage from './components/ResearchDataPage';
+
 import './App.css';
 
 function App() {
@@ -45,6 +47,8 @@ function App() {
 
                 <main className="container">
                     <Routes>
+                    <Route path="/research-data" element={<ResearchDataPage/>} />
+
                         <Route path="/" element={isLoggedIn ? <HomePage /> : <Navigate to="/login" />} />
                         <Route path="/add-donation" element={isLoggedIn ? <AddDonation /> : <Navigate to="/login" />} />
                         <Route path="/dispense-blood" element={isLoggedIn ? <DispenseBlood /> : <Navigate to="/login" />} />

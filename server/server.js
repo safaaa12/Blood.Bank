@@ -20,7 +20,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
  app.use((req, res, next) => {
         console.log(`${req.method} ${req.url}`);
         next();});
-app.use('/api', bloodRoutes);
+app.use('/api/blood', bloodRoutes);
 app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 3001;

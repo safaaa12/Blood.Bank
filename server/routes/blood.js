@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Donor = require('../models/donor');
+const authenticateToken = require('../middleware/authenticateToken');
 
-// טבלת התאמת סוגי דם
-
+// Blood compatibility table
 const bloodCompatibility = {
     'A+': ['A+', 'A-', 'O+', 'O-'],
     'A-': ['A-', 'O-'],
@@ -15,12 +15,11 @@ const bloodCompatibility = {
     'O-': ['O-']
 };
 
-// מסלול להוספת תרומת דם
-// מסלול להוספת תרומת דם
+// Route for adding blood donation
 router.post('/donate', async (req, res) => {
     const { bloodType, donationDate, donorId, donorName } = req.body;
 
-    // בדיקת שדות חובה
+    // Check required fields
     if (!bloodType || !donationDate || !donorId || !donorName) {
         return res.status(400).send('יש למלא את כל השדות הנדרשים.');
     }
@@ -35,7 +34,7 @@ router.post('/donate', async (req, res) => {
     }
 });
 
-// מסלול לניפוק דם לשגרה
+// Route for dispensing blood regularly
 router.post('/dispense', async (req, res) => {
     const { bloodType, amount } = req.body;
     try {
@@ -74,12 +73,12 @@ router.post('/dispense', async (req, res) => {
     }
 });
 
-// מסלול לניפוק דם במצב חירום (אר"ן)
+// Route for emergency dispensing
 router.post('/emergency-dispense', async (req, res) => {
-    const { amount } = req.body; // קבלת כמות הדם הנדרשת מהבקשה
+    const { amount } = req.body;
     try {
         const donors = await Donor.find({ bloodType: 'O-' }).sort({ donationDate: 1 }).limit(amount);
-        console.log('Found donors:', donors); // הודעת לוג למעקב
+        console.log('Found donors:', donors);
 
         if (donors.length === 0) {
             console.log('No O- donors found');
@@ -105,6 +104,28 @@ router.post('/emergency-dispense', async (req, res) => {
     } catch (error) {
         console.error('Error during emergency dispense:', error);
         res.status(500).send('שגיאה בניפוק הדם לחירום');
+    }
+});
+
+// Route for statistics (accessible only by students)
+// Route for statistics (accessible only by students)
+router.get('/stats', async (req, res) => {
+    try {
+        const totalDonations = await Donor.countDocuments();
+        const totalDonors = await Donor.distinct('donorId').countDocuments(); // Count unique donors
+        const emergencyDispenseCount = await Donor.countDocuments({ bloodType: 'O-' }); // Example count for emergency dispense
+        const bloodTypeCounts = await Donor.aggregate([
+            { $group: { _id: "$bloodType", count: { $sum: 1 } } }
+        ]);
+        res.json({
+            bloodTypeCounts,
+            totalDonations,
+            totalDonors,
+            emergencyDispense: emergencyDispenseCount
+        });
+    } catch (error) {
+        console.error('Error fetching statistics:', error.message);
+        res.status(500).json({ message: 'Error fetching statistics' });
     }
 });
 

@@ -1,0 +1,49 @@
+/* ResearchDataPage.css */
+
+/* Container for the entire page */
+.container {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+/* Style for the title */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Style for the table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+}
+
+thead {
+  background-color: #f4f4f4;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #e0e0e0;
+}
+
+/* Style for the chart container */
+.chart-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}

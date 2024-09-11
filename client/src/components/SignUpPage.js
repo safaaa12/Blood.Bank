@@ -112,7 +112,8 @@ function SignUpPage() {
                         required
                     >
                         <option value="user">משתמש</option>
-                        <option value="admin">מנהל</option>
+                        <option value="student"> סטודנט מחקר</option>
+                    
                     </select>
                 </div>
                 <button type="submit" className="btn">הירשם</button>

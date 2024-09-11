@@ -1,6 +1,8 @@
 const express = require('express');
 const { User } = require('../models/user'); // استخدام `User` هنا
 const jwt = require('jsonwebtoken');
+const ResearchData = require('../models/ResearchData'); // Path to the new model
+
 const bcrypt = require('bcryptjs');
 
 // Initialize express Router
@@ -62,6 +64,46 @@ router.post('/login', async (req, res) => {
       res.status(500).json({ message: 'Server error' });
   }
 });
+const authenticateToken = async (req, res, next) => {
+    const token = req.headers['authorization']?.split(' ')[1]; // Extract token from Authorization header
+
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWTPRIVATEKEY);
+        const user = await User.findById(decoded.userId); // Find user from DB
+
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid token' });
+        }
+
+        req.user = user; // Attach user to request
+        next();
+    } catch (error) {
+        console.error('Token verification error:', error);
+        res.status(401).json({ message: 'Failed to authenticate token' });
+    }
+};
+
+// Route for fetching research data
+router.get('/research-data', authenticateToken, async (req, res) => {
+    // Check if the user role is 'student'
+    if (req.user.role !== 'student') {
+        return res.status(403).json({ message: 'Access denied. You do not have permission to view this data.' });
+    }
+
+    try {
+        // Fetch research data from the database or another source
+        const researchData = await ResearchData.find(); // Adjust according to your database schema
+        res.json(researchData);
+    } catch (err) {
+        console.error('Error fetching research data:', err);
+        res.status(500).json({ message: 'Error fetching research data' });
+    }
+});
+
 // In your auth.js or user.js (or similar file)
 router.get('/user/email/:email', async (req, res) => {
     const userEmail = decodeURIComponent(req.params.email);
@@ -71,9 +113,9 @@ router.get('/user/email/:email', async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+        res.status(200).json({ role: user.role });
 
-        console.log('Found user:', user); // בדוק את המשתמש שנמצא במסד הנתונים
-        res.status(200).json({ role: user.role }); // שלח את התפקיד
+
     } catch (error) {
         console.error('Error fetching user by email:', error);
         res.status(500).json({ message: 'Server error' });
