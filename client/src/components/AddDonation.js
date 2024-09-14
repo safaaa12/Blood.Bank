@@ -39,7 +39,7 @@ function AddDonation() {
         }
 
         try {
-            await axios.post('http://localhost:3001/api/donate', formData);
+            await axios.post('http://localhost:3001/api/blood/donate', formData);
             setMessage('תרומה נרשמה בהצלחה');
             setMessageType('success');
             setFormData({

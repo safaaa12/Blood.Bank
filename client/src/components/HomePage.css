@@ -1,56 +1,75 @@
-/* HomePage.css */
-
-/* Container for the entire page */
+/* עיצוב כללי לעמוד */
 .home-container {
-    padding: 20px;
-    max-width: 900px;
-    margin: auto;
-  }
-  
-  /* Style for the title */
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-  }
-  
-  /* Style for the buttons container */
-  .button-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .page-button {
-    display: block;
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    margin: 5px 0;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .page-button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Style for the stats container */
-  .stats-container {
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .stats-container h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-  
-  .stats-container p {
-    font-size: 16px;
-    margin: 5px 0;
-  }
-  
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* עיצוב כותרת */
+h1 {
+  font-size: 2.5em;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* תצוגת תפקיד המשתמש */
+.role-display {
+  font-size: 1.2em;
+  color: #555;
+  margin-bottom: 20px;
+  background-color: #e0e0e0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* עיצוב כפתורים */
+.button-container {
+  margin-top: 20px;
+}
+
+.page-button {
+  display: inline-block;
+  margin: 10px;
+  padding: 15px 30px;
+  background-color: #16a9d6;
+  color: white;
+  text-decoration: none;
+  font-size: 1.2em;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.page-button:hover {
+  background-color: #0e8bb8;
+}
+
+/* עיצוב רשימת התורמים והמטה-דאטה */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+th {
+  background-color: #16a9d6;
+  color: white;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #ddd;
+}

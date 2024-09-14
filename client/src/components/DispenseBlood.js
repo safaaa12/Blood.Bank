@@ -22,7 +22,7 @@ function DispenseBlood() {
         setAlternativeResponse(null);
         setError(null);
         try {
-            const res = await axios.post('http://localhost:3001/api/dispense', formData);
+            const res = await axios.post('http://localhost:3001/api/blood/dispense', formData);
             if (res.data.alternativeType) {
                 setAlternativeResponse(res.data);
             } else {

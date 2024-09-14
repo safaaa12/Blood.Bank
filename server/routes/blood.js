@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Donor = require('../models/donor');
-const authenticateToken = require('../middleware/authenticateToken');
 
 // Blood compatibility table
 const bloodCompatibility = {
@@ -128,5 +127,39 @@ router.get('/stats', async (req, res) => {
         res.status(500).json({ message: 'Error fetching statistics' });
     }
 });
+
+// Route for fetching meta data (accessible only by admins)
+router.get('/meta', async (req, res) => {
+    try {
+        const totalBloodUnits = await Donor.countDocuments();
+        const totalDonors = await Donor.distinct('donorId').countDocuments();
+        const recentDispenses = await Donor.aggregate([
+            { $match: {} },
+            { $group: { _id: null, recentDispenseCount: { $sum: 1 } } }
+        ]);
+
+        res.json({
+            totalBloodUnits,
+            totalDonors,
+            recentDispenses: recentDispenses.length > 0 ? recentDispenses[0].recentDispenseCount : 0
+        });
+    } catch (error) {
+        console.error('Error fetching meta data:', error.message);
+        res.status(500).json({ message: 'Error fetching meta data' });
+    }
+});
+
+// Route to get all donors
+router.get('/donors', async (req, res) => {
+    console.log('Request received for fetching donors');  // לוג לבדיקת קבלת הבקשה
+    try {
+        const donors = await Donor.find({});
+        res.json(donors);
+    } catch (error) {
+        console.error('Error fetching donors:', error);
+        res.status(500).send('שגיאה בשליפת התורמים');
+    }
+});
+
 
 module.exports = router;
