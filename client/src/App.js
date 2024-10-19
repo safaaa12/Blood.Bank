@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes, NavLink, Navigate } from 'react-router-dom';
 import AddDonation from './components/AddDonation';
 import DispenseBlood from './components/DispenseBlood';
@@ -6,108 +7,128 @@ import EmergencyDispense from './components/EmergencyDispense';
 import HomePage from './components/HomePage';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
-import ResearchDataPage from './components/ResearchDataPage';
-import MetaDataDisplay from './components/MetaDataDisplay'; // Import MetaDataDisplay
 import DonorListDisplay from './components/DonorListDisplay';
-import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHome, faHeartCircleBolt, faUsers, faTint, faSignInAlt, faSignOutAlt, faUserPlus, faExclamationCircle, faClipboardCheck, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 import './App.css';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
-    const [userRole, setUserRole] = useState(''); // ניהול תפקיד המשתמש
+    const [userRole, setUserRole] = useState(''); 
+    const [loadingRole, setLoadingRole] = useState(true); 
+
+    const handleLogin = () => {
+        setIsLoggedIn(true);
+        const userEmail = localStorage.getItem('email');
+        fetchUserRole(userEmail);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('email');
+        localStorage.removeItem('token'); // הסרה של האסימון ב-log out
+        setIsLoggedIn(false);
+        setUserRole(''); 
+    };
+
+    const fetchUserRole = async (userEmail) => {
+        try {
+            setLoadingRole(true);
+            // תיקון הבעיה ב-URL עם תבנית המחרוזת
+            const response = await axios.get(`http://localhost:3001/api/auth/user/email/${encodeURIComponent(userEmail)}`);
+            const { role } = response.data;
+            setUserRole(role); 
+        } catch (error) {
+            console.error('Error fetching user role:', error);
+        } finally {
+            setLoadingRole(false); 
+        }
+    };
 
     useEffect(() => {
         const userEmail = localStorage.getItem('email');
         if (userEmail) {
-            fetchUserRole(userEmail);
+            fetchUserRole(userEmail); 
         }
-    }, []);
-
-    const fetchUserRole = async (userEmail) => {
-        const urlEncodedEmail = encodeURIComponent(userEmail);
-        try {
-            const response = await axios.get(`http://localhost:3001/api/auth/user/email/${urlEncodedEmail}`);
-            const { role } = response.data;
-            setUserRole(role); // שמירת תפקיד המשתמש ב-state
-        } catch (error) {
-            console.log('Error fetching user role:', error);
-        }
-    };
-
-    const handleLogin = () => {
-        setIsLoggedIn(true);
-    };
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsLoggedIn(false);
-    };
-
-    // ניווט הכפתורים לפי תפקיד המשתמש
-    const renderNavLinks = () => {
-        switch (userRole) {
-            case 'admin':
-                return (
-                    <>
-                        <NavLink to="/" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>עמוד הבית</NavLink>
-                        <NavLink to="/add-donation" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>הוסף תרומה</NavLink>
-                        <NavLink to="/dispense-blood" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>ניפוק דם</NavLink>
-                        <NavLink to="/emergency-dispense" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>ניפוק חירום</NavLink>
-                        <NavLink to="/meta-data" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>מטה-דאטה</NavLink>
-                        <NavLink to="/DonorListDisplay" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>רשימת תורמים</NavLink>
-                    </>
-                );
-            case 'user':
-                return (
-                    <>
-                        <NavLink to="/" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>עמוד הבית</NavLink>
-                        <NavLink to="/add-donation" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>הוסף תרומה</NavLink>
-                        <NavLink to="/dispense-blood" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>ניפוק דם</NavLink>
-                        <NavLink to="/emergency-dispense" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>ניפוק חירום</NavLink>
-                    </>
-                );
-            case 'student':
-                return (
-                    <>
-                        <NavLink to="/research-data" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>נתוני מחקר</NavLink>
-                    </>
-                );
-            default:
-                return null;
-        }
-    };
+    }, [isLoggedIn]);
 
     return (
         <Router>
             <div className="app-container">
-                <nav className="main-nav">
+                <aside className="sidebar">
                     <ul className="nav-links">
                         {isLoggedIn ? (
                             <>
-                                {renderNavLinks()}
-                                <NavLink onClick={handleLogout} className="nav-link">התנתק</NavLink>
+                                <li>
+                                    <NavLink to="/" className={({ isActive }) => (isActive ? 'nav-link active-link' : 'homepage')}>
+                                        <FontAwesomeIcon icon={faHome} className="icon" /> דף הבית
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/add-donation" className={({ isActive }) => (isActive ? 'nav-link active-link' : 'nav-link')}>
+                                        <FontAwesomeIcon icon={faUsers} className="icon" /> הוספת תרומה
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/dispense-blood" className={({ isActive }) => (isActive ? 'nav-link active-link' : 'nav-link')}>
+                                        <FontAwesomeIcon icon={faTint} className="icon" /> ניפוק דם 
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/emergency-dispense" className={({ isActive }) => (isActive ? 'nav-link active-link' : 'nav-link')}>
+                                        <FontAwesomeIcon icon={faExclamationCircle} className="icon" /> ניפוק דם במצב חירום
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/meta-data" className={({ isActive }) => (isActive ? 'nav-link active-link' : 'nav-link')}>
+                                        <FontAwesomeIcon icon={faClipboardCheck} className="icon" /> נמסר
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/donor-list" className={({ isActive }) => (isActive ? 'nav-link active-link' : 'nav-link')}>
+                                        <FontAwesomeIcon icon={faUserFriends} className="icon" /> משתמשים
+                                    </NavLink>
+                                </li>
                             </>
                         ) : (
-                            <>
-                                <NavLink to="/login" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>היכנס</NavLink>
-                                <NavLink to="/signup" className={({ isActive }) => (isActive ? 'active-link' : 'nav-link')}>הרשמה</NavLink>
-                            </>
+                            <li>
+                                 <NavLink to="/" className={({ isActive }) => (isActive ? 'homepage active-link' : 'homepage')}>
+                                        <FontAwesomeIcon icon={faHome} className="icon" /> דף הבית
+                                  </NavLink>
+                            </li>
                         )}
                     </ul>
-                    <div className="logo-container"><NavLink to="/">
-                     <img src='/bdrop.png' alt="Logo" className="logo" /> </NavLink></div>
-                </nav>
-                
+                </aside>
+                <header className="header">
+                    <span className="system-name">
+                        ברוך הבא למערכת ניהול בנק הדם
+                        <FontAwesomeIcon icon={faHeartCircleBolt} style={{ marginRight: '8px', paddingLeft: '9px' }} />
+                    </span>
+                    <div className="auth-buttons">
+                        {isLoggedIn ? (
+                            <button className="logout-button" onClick={handleLogout}>
+                                <FontAwesomeIcon icon={faSignOutAlt} />
+                                התנתק
+                            </button>
+                        ) : (
+                            <div className="loginandsignup">
+                                <button onClick={() => window.location.href = '/login'}>
+                                    <FontAwesomeIcon icon={faSignInAlt} style={{ marginRight: '8px', paddingLeft: '9px' }} /> התחבר
+                                </button>
+                                <button onClick={() => window.location.href = '/signup'}>
+                                    <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '8px', paddingLeft: '9px' }} /> הרשמה
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </header>
+
                 <main className="container">
                     <Routes>
-                    <Route path="/research-data" element={<ResearchDataPage/>} />
-
-                        <Route path="/" element={isLoggedIn ? <HomePage /> : <Navigate to="/login" />} />
+                        <Route path="/" element={<HomePage />} />
                         <Route path="/add-donation" element={isLoggedIn ? <AddDonation /> : <Navigate to="/login" />} />
                         <Route path="/dispense-blood" element={isLoggedIn ? <DispenseBlood /> : <Navigate to="/login" />} />
                         <Route path="/emergency-dispense" element={isLoggedIn ? <EmergencyDispense /> : <Navigate to="/login" />} />
-                        <Route path="/meta-data" element={isLoggedIn ? <MetaDataDisplay /> : <Navigate to="/login" />} /> {/* MetaDataDisplay Route */}
-                        <Route path="/DonorListDisplay" element={isLoggedIn ? <DonorListDisplay /> : <Navigate to="/login" />} /> {/* MetaDataDisplay Route */}
+                        <Route path="/donor-list" element={isLoggedIn ? <DonorListDisplay /> : <Navigate to="/login" />} />
                         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
                         <Route path="/signup" element={<SignUpPage />} />
                     </Routes>

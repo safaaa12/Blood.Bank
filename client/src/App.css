@@ -1,144 +1,374 @@
-/* General App Container */
+/* עיצוב כללי */
 .app-container {
-  font-family: Arial, sans-serif;
-  margin: 0;
+  display: flex;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  direction: rtl; /* שינוי כיוון ימין לשמאל */
+  text-align: right; /* שינוי יישור לימין */
+}
+/* Sidebar styling */
+.sidebar {
+  width: 240px;
+  background-color: #b71c1c;
+  color: #fff;
   padding: 0;
-  box-sizing: border-box;
-}
-
-/* Main Navigation */
-.main-nav {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f8f9fa;
-  padding: 10px 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  align-items: flex-start;
+  position: fixed;
+  top: 74.5px;
+  bottom: 0;
+  right: 0;
+  z-index: 1000;
 }
-
-/* Logo Container */
-.logo-container {
-  display: flex;
-  align-items: center;
-}
-
-/* Logo Style */
-.logo {
-  height: 100px;
-  width: auto;
-}
-
-/* Navigation Links */
 .nav-links {
-  display: flex;
-  align-items: center;
   list-style: none;
-  margin: 0;
   padding: 0;
-}
-
-/* Active Link Style */
-.active-link {
-  background-color: #074356;  /* Darker blue background for active link */
-  color: #ffffff;             /* White text for contrast */
-  font-weight: bold;          /* Bold text to make the active link stand out */
-  padding: 10px 20px;         /* Padding to ensure the button-like appearance */
-  border-radius: 4px;         /* Rounded corners for a modern look */
-  text-decoration:none;   /* Remove underline */
-  font-size: 20px;
+  margin: 0;
+  width: 100%;
 }
 
 .nav-links li {
-  margin-left: 20px;
+  margin-bottom: 20px; /* More spacing between items */
+  margin: 0;
 }
-
-/* Style for Login and Sign Up Buttons */
 .nav-link {
+  color: #fff;
   text-decoration: none;
-  color: #ffffff;
-  background-color: #16a9d6;
-  font-weight: bold;  
-  padding: 10px 20px;
-  border-radius: 4px;
-  margin-right: 10px;  
-  margin-left: 10px;
-  font-size: 20px;
-}
-
-.active-link:hover{
-  background-color:  #074356;
-} .nav-link:hover {
-  background-color:  #074356;
-}
-
-/* Logout Button */
-.btn.logout-btn {
+  font-size: 18px;
+  padding: 12px;
   display: flex;
   align-items: center;
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-  margin-right: 10px;  
-  margin-left: 10px;
-  font-size: 20px;
-  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.nav-links .homepage{
+  color: #fff;
+  background-color: #9a9998;
+  text-decoration: none;
+  font-size: 18px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.nav-links .homepage .icon{
+  margin-left: 10px; /* Add spacing between the icon and text */
+  font-size: 18px;
+}
+.nav-link .icon {
+  margin-left: 10px; /* Add spacing between the icon and text */
+  font-size: 18px;
 }
 
-.btn.logout-btn:hover {
+.nav-link:hover {
   background-color: #d32f2f;
 }
 
-.btn.logout-btn i {
+.nav-link.active-link {
+  background-color: #ff5252;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* אפקט shadow */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.nav-links .homepage .active-link {
+  background-color: #ff5252;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* אפקט shadow */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* עיצוב הניווט העליון */
+header {
+  background-color: #b71c1c; /* צבע אדום כהה כדי להתאים לסרגל הצדדי */
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  position: fixed;
+  width: 100%;
+  height: 35px;
+  direction: rtl; /* כיוון ימין לשמאל */
+  text-align: right; /* יישור לימין */
+}
+header .auth-buttons {
+  position: absolute;
+  left: 0; /* מיקום בצד שמאל ממש */
+  padding-left: 60px; /* רווח מצד שמאל */
+  display: flex;
+  gap: 15px;
+}
+header .logout-button{
+  display: flex;
+  gap: 5px;
+}
+header .logout-button{
+  border: none;
+  padding: 5px 10px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #fff;
+  color: #b71c1c;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+header .loginandsignup {
+  display: flex;
+  gap: 15px;
+}
+header .loginandsignup button {
+  border: none;
+  padding: 5px 10px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #fff;
+  color: #b71c1c;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+header .loginandsignup button:hover {
+  background-color: #9a9998;
+}
+header .system-name {
+  text-align: right;
+  margin-right: 10px; /* רווח קטן מצד ימין */
+  position: absolute;
+  right: 0; /* מיקום בצד ימין ממש */
+  padding-right: 20px; /* רווח מצד ימין */
+  text-align: right;
+  font-size: 25px;
+  font-weight:normal;
+ }
+/* עיצוב התוכן המרכזי */
+.container {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 20px;
+  padding-left: 20px;
+  width: calc(100% - 240px); /* תופס את כל הרוחב הנותר */
+  height: calc(100vh - 74.5px); /* מתחשב בגובה ה-header */
+  overflow-y: auto; /* מוסיף גלילה במקרה של תוכן רב */
+  margin-right: 240px; /* מאפשר רווח לצד הסרגל הצדדי */
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 10px 20px;
+  }
+
+  .container {
+    padding: 10px;
+    max-width: 100%;
+    margin-right: 0;
+  }
+
+  header {
+    width: 100%;
+    right: 0;
+  }
+}
+
+/* עיצוב דף ההרשמה */
+.sign-up-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.signup-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 20px;
+  background-color: black;
+  padding: 10px;
+  color: white;
+  text-align: center;
+}
+.sign-up-container{
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* צל כדי להוסיף עומק */
+  width: 400px;
+  text-align: center;
+}
+/* עיצוב דף הכניסה */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-container {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* צל כדי להוסיף עומק */
+  width: 400px;
+  text-align: center;
+}
+
+.login-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 20px;
+  background-color: black;
+  padding: 10px;
+  color: white;
+  text-align: center;
+}
+.form-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.form-group label {
+  font-size: 20px;
+  color: #333;
+  width: 35%; /* רוחב הלייבל */
+}
+
+.form-group input {
+  width: 70%; /* רוחב השדה */
+  padding: 10px;
+  font-size: 16px;
+}
+
+.form-group input:focus {
+  border-color: #6610f2; /* אפקט פוקוס בצבע סגול */
+  outline: none;
+}
+
+.btn {
+  background-color: #ff3b3b;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn:hover {
+  background-color: #d32f2f; /* שינוי צבע ב-hover */
+}
+
+
+.signup-link {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.signup-link a {
+  color: #6610f2;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+/*add add-donation*/
+.addDonationPage{
+  height: calc(100vh - 74.5px); /* Ensure it fits in the viewport minus the header */
+  overflow: hidden; /* Disable vertical scroll */
+}
+.addDonation-container {
+  margin: 50px auto;
+  padding:10px;
+}
+
+.addDonation-title , .dispenseBlood-title,.emergencyDispense-title {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding: 10px;
+  color: #000;
+}
+.dispenseBlood-title::after, .addDonation-title::after,.emergencyDispense-title::after  {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #ded9d9; /* צבע הקו */
+  margin-top: 10px;
+  margin-left: 0px;
+}
+
+.message {
+  min-height: 24px; /* גובה מינימלי להודעה */
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.message.success {
+  color: #28a745;
+}
+
+.message.error {
+  color: #dc3545;
+}
+
+.message svg {
   margin-right: 8px;
 }
-
-/* Main Content Container */
-.container {
-  padding: 20px;
-  text-align: center;
+/*עיצוב של עמוד ניפוק דם */
+.dispenseBloodPage {
+  height: calc(100vh - 74.5px); /* Fits in the viewport minus the header */
+  overflow: hidden; /* Disable scroll */
+}
+.dispenseBlood-container {
+  padding-top: 150px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+ /*ניפוק חירום עיצוב */
+ .emergencyDispensePage {
+  height: calc(100vh - 74.5px); /* Ensure it fits in the viewport minus the header */
+  overflow: hidden; /* Disable scroll */
 }
 
-/* Responsive Design for Mobile */
-@media (max-width: 768px) {
-  .main-nav {
-      flex-direction: column;
-      align-items: flex-start;
-  }
-
-  .nav-links {
-      flex-direction: column;
-      align-items: flex-start;
-      width: 100%;
-  }
-
-  .nav-links li {
-      margin-left: 0;
-      margin-bottom: 10px;
-  }
-}
-.footer {
-  background-color: #f8f9fa;
-  padding: 10px 0;
-  text-align: center;
-  border-top: 1px solid #ddd;
+.emergencyDispense-container {
+  padding-top: 150px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.footer p {
-  margin: 0;
+.emergencyDispensePage .emergency-info {
+  font-size: 16px;
+  margin-bottom: 20px;
   color: #333;
 }
-
-.footer a {
-  color: #16a9d6;
-  text-decoration: none;
-  margin: 0 10px;
+.emergencyDispense-title svg {
+  margin-right: 10px;
+  margin-bottom: -2px;
+  font-size: 24px;
 }
-
-.footer a:hover {
-  text-decoration: underline;
+.emergencyDispensePage-btn {
+  background-color: #ff3b3b;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
 }

@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 
+// סכמת התורם
 const donorSchema = new mongoose.Schema({
-    bloodType: String,
-    donationDate: Date,
-    donorId: String,
-    donorName: String
+    donorName: String,            // שם התורם
+    disease: { type: String, default: 'None' }, // מחלה (ברירת מחדל - 'None')
+    age: Number,                  // גיל התורם
+    bloodType: String,            // סוג דם
+    donorId: String               // מזהה התורם
 });
 
 const Donor = mongoose.model('Donor', donorSchema);

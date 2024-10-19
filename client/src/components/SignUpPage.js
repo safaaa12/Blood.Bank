@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './SignUpPage.css';
 
 function SignUpPage() {
     const [formValues, setFormValues] = useState({
@@ -55,7 +54,8 @@ function SignUpPage() {
 
     return (
         <div className="sign-up-page">
-            <h2 className='signup'>הרשמה</h2>
+            <div className="sign-up-container">
+            <h2 className='signup-title'>הרשמה</h2>
             {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -112,13 +112,12 @@ function SignUpPage() {
                         required
                     >
                         <option value="user">משתמש</option>
-                        <option value="student"> סטודנט מחקר</option>
-                    
+                        <option value="student">סטודנט מחקר</option>
                     </select>
                 </div>
                 <button type="submit" className="btn">הירשם</button>
             </form>
-        </div>
+        </div></div>
     );
 }
 

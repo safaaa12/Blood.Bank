@@ -1,0 +1,53 @@
+.donor-list-container {
+    padding: 20px;
+}
+
+.donor-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 16px;
+}
+
+.donor-table th, .donor-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.donor-table th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.approve-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.reject-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.approved-label {
+    background-color: #ffeb3b;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.rejected-label {
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}

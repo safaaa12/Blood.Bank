@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './DonorListDisplay.css'; // קובץ CSS לעיצוב
 
 const DonorListDisplay = () => {
     const [donors, setDonors] = useState([]); // ניהול רשימת התורמים
@@ -17,28 +18,57 @@ const DonorListDisplay = () => {
             });
     }, []);
 
+    const handleApprove = (donorId) => {
+        // לוגיקה לאישור תורם
+        console.log(`Approve donor: ${donorId}`);
+    };
+
+    const handleReject = (donorId) => {
+        // לוגיקה לדחיית תורם
+        console.log(`Reject donor: ${donorId}`);
+    };
+
     return (
-        <div>
-            <h2>רשימת תורמים</h2>
+        <div className="donor-list-container">
+            <h2>פרטי תרומות דם</h2>
             {error ? ( // אם יש שגיאה, תוצג השגיאה על המסך
                 <p style={{ color: 'red' }}>שגיאה: {error}</p>
             ) : donors.length > 0 ? ( // אם יש תורמים, נציג אותם בטבלה
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <table className="donor-table">
                     <thead>
-                        <tr style={{ backgroundColor: '#f2f2f2' }}>
-                            <th style={{ border: '1px solid black', padding: '8px' }}>שם התורם</th>
-                            <th style={{ border: '1px solid black', padding: '8px' }}>סוג דם</th>
-                            <th style={{ border: '1px solid black', padding: '8px' }}>תאריך תרומה</th>
-                            <th style={{ border: '1px solid black', padding: '8px' }}>מזהה תורם</th>
+                        <tr>
+                            <th>שם תורם</th>
+                            <th>מחלה</th>
+                            <th>גיל</th>
+                            <th>סוג דם</th>
+                            <th>יחידות</th>
+                            <th>תאריך בקשה</th>
+                            <th>סטטוס</th>
+                            <th>פעולה</th>
                         </tr>
                     </thead>
                     <tbody>
                         {donors.map((donor) => (
                             <tr key={donor._id}>
-                                <td style={{ border: '1px solid black', padding: '8px' }}>{donor.donorName}</td>
-                                <td style={{ border: '1px solid black', padding: '8px' }}>{donor.bloodType}</td>
-                                <td style={{ border: '1px solid black', padding: '8px' }}>{new Date(donor.donationDate).toLocaleDateString('he-IL')}</td>
-                                <td style={{ border: '1px solid black', padding: '8px' }}>{donor.donorId}</td>
+                                <td>{donor.donorName}</td>
+                                <td>{donor.disease || 'None'}</td>
+                                <td>{donor.age}</td>
+                                <td>{donor.bloodType}</td>
+                                <td>{donor.units}</td>
+                                <td>{new Date(donor.requestDate).toLocaleDateString('he-IL')}</td>
+                                <td>{donor.status}</td>
+                                <td>
+                                    {donor.status === 'Pending' ? (
+                                        <>
+                                            <button className="approve-btn" onClick={() => handleApprove(donor._id)}>אשר</button>
+                                            <button className="reject-btn" onClick={() => handleReject(donor._id)}>דחה</button>
+                                        </>
+                                    ) : donor.status === 'Approved' ? (
+                                        <span className="approved-label">{donor.units} יחידות נוספו למלאי</span>
+                                    ) : (
+                                        <span className="rejected-label">0 יחידות נוספו למלאי</span>
+                                    )}
+                                </td>
                             </tr>
                         ))}
                     </tbody>
