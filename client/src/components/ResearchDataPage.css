@@ -1,0 +1,45 @@
+/* עיצוב כללי של עמוד הסטטיסטיקות */
+.research-data-container {
+  margin: 50px auto;
+  padding:10px;
+  display: flex;
+}
+/* כותרת מעוצבת */
+.research-title {
+  font-size: 2em;
+  color: #000000;
+  margin-top: 40px;
+  font-weight:normal;
+  text-transform: uppercase;
+  font-size:large;
+}
+/* עיצוב טבלת סוגי הדם */
+.blood-type-table {
+  width: 100%;
+  max-width: 800px; /* מגבלה על הרוחב כדי להתאים לתצוגה המרכזית */
+  margin-bottom: 20px;
+  
+}
+
+.blood-type-table th,
+.blood-type-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: right;
+}
+
+.blood-type-table th {
+  background-color: #b71c1c;
+  color: white;
+}
+
+.blood-type-table td {
+  background-color: #fff;
+}
+
+/* עיצוב הגרף */
+.chart-container {
+  width: 100%;
+  max-width: 800px; /* מגבלה על הרוחב כדי שלא יתפוס יותר מדי מקום */
+  height: 400px; /* גובה קבוע לגרף */
+}
