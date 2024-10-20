@@ -20,23 +20,16 @@ function DispenseBlood() {
         setResponse(null);
         setAlternativeResponse(null);
         setError(null);
-
-        // ולידציה לסוג דם נבחר
-        if (!formData.bloodType) {
-            setError('יש לבחור סוג דם.');
-            return;
-        }
-
-        // ולידציה לכמות המנות
-        if (formData.amount <= 0) {
-            setError('כמות חייבת להיות גדולה מאפס.');
-            return;
-        }
-
+    
+        const token = localStorage.getItem('token'); // בהנחה שהטוקן שמור ב-localStorage
+    
         try {
-            const res = await axios.post('http://localhost:3001/api/blood/dispense', formData);
+            const res = await axios.post(
+                'http://localhost:3001/api/blood/dispense',
+                formData,
+                { headers: { Authorization: `Bearer ${token}` } } // הוספת הטוקן ל-Header
+            );
             
-            // בדיקה אם התקבל סוג דם חלופי
             if (res.data.alternativeType) {
                 setAlternativeResponse(res.data);
             } else {
@@ -50,6 +43,7 @@ function DispenseBlood() {
             }
         }
     };
+    
 
     return (
         <div className="dispenseBloodPage">

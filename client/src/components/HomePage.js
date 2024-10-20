@@ -145,6 +145,7 @@ const HomePage = () => {
                         <span className="general-stat-icon">🩸</span>
                         <span>סה"כ נתרם היום</span>
                         <span>{bloodStats.totalDonatedToday || 0}</span>
+                        <button className="download-report-button" onClick={() => downloadAllDonations('pdf')}>יומן פעולות</button>
                     </div>
                     <div className="general-stat-card">
                         <span className="general-stat-icon">📝</span>

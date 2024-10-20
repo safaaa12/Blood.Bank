@@ -62,8 +62,9 @@ const ResearchDataPage = () => {
   };
 
   return (
-    <div className="research-data-container">
+    <div className="research-data">
       <h1 className="research-title">סטטיסטיקות סוגי דם</h1>
+      <div className="research-data-container">
       <table className="blood-type-table">
         <thead>
           <tr>
@@ -111,7 +112,7 @@ const ResearchDataPage = () => {
           },
         }} />
       </div>
-    </div>
+    </div></div>
   );
 };
 

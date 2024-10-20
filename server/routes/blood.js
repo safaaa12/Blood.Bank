@@ -6,6 +6,15 @@ const AuditLog = require('../models/auditLog');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+async function logAction(action, username, role, details) {
+    try {
+        const log = new AuditLog({ action, user: username, userRole: role, details });
+        await log.save();
+        console.log('Log saved successfully.');
+    } catch (error) {
+        console.error('Error saving log:', error);
+    }
+}
 // פונקציית אימות טוקן JWT
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -19,18 +28,16 @@ const authenticateToken = (req, res, next) => {
             return res.status(403).send('Token is not valid');
         }
 
-        req.user = user; // המשתמש מאומת, ממשיכים
+        req.user = user; // שמירת המידע המאומת ב-req.user
+        console.log('Authenticated user:', req.user); // הדפסת התוכן של req.user כדי לבדוק אם המידע נשלף
         next();
     });
 };
-
 // נתיב להוספת תרומת דם
 router.post('/donate', authenticateToken, async (req, res) => {
     const { bloodType, donationDate, donorId, donorName, age, disease, units } = req.body;
-
     try {
         let donor = await Donor.findOne({ donorId });
-
         if (!donor) {
             donor = new Donor({
                 donorName,
@@ -38,10 +45,11 @@ router.post('/donate', authenticateToken, async (req, res) => {
                 disease,
                 bloodType,
                 donorId,
-                createdBy: req.user.id
+                createdBy: req.user._id
             });
             await donor.save();
-            console.log('Donor saved with createdBy:', donor.createdBy);
+            console.log(' userROLE:',req.user.role);
+            await logAction('Blood Donation Added', req.user.username, req.user.role, `Added ${units} blood units for donor ID: ${donorId}`);
         }
 
         const bloodUnitsArray = [];
@@ -52,19 +60,23 @@ router.post('/donate', authenticateToken, async (req, res) => {
                 donationDate: new Date(donationDate),
                 expirationDate: new Date(new Date(donationDate).setDate(new Date(donationDate).getDate() + 30)),
                 status: 'Pending',
-                createdBy: req.user.id
+                createdBy: req.user._id
             });
             bloodUnitsArray.push(bloodUnit.save());
+            console.log('User ID:', req.user._id);
+            console.log('Username:', req.user.username);
+            console.log('Role:', req.user.role);
+            await logAction('Blood Donation Added', req.user.username, req.user.role, `Added ${units} blood units for donor ID: ${donorId}`);
         }
-
-        // ביצוע כל השמירות בצורה אסינכרונית
         await Promise.all(bloodUnitsArray);
         res.status(201).send('תרומה נרשמה בהצלחה');
     } catch (error) {
-        console.error('Error during donation registration:', error);
+        console.error('Error during donation registration:', error.message);  // הדפסת הודעת השגיאה
+        console.error('Stack trace:', error.stack);  // הדפסת המעקב אחר השגיאה
         res.status(500).send('שגיאה ברישום התרומה');
-    }
+    }    
 });
+
 
 // Route for checking if donor exists by donorId
 router.get('/donors/:donorId', async (req, res) => {
@@ -125,60 +137,32 @@ router.post('/reject', async (req, res) => {
         res.status(500).send('שגיאה בדחיית התרומה');
     }
 });
-router.post('/dispense', async (req, res) => { 
+router.post('/dispense', authenticateToken, async (req, res) => { 
     const { bloodType, amount } = req.body;
     try {
         const currentDate = new Date();
 
-        // חיפוש כל המלאי הזמין מסוג הדם המבוקש
         const totalAvailableUnits = await BloodUnit.find({
             status: 'Pending',
-            expirationDate: { $gt: currentDate }, // לוודא שהדם לא פג תוקף
+            expirationDate: { $gt: currentDate },
             bloodType: bloodType
         });
 
-        const totalAvailableAmount = totalAvailableUnits.length;
-
-        // בדיקה אם יש מספיק מנות במלאי
-        if (totalAvailableAmount < amount) {
-            // חיפוש סוג דם חלופי אם אין מספיק במלאי
-            const alternativeType = await findAlternativeBloodType(bloodType); // פונקציה שתמצא סוג חלופי
-            if (alternativeType) {
-                const alternativeUnits = await BloodUnit.find({
-                    status: 'Pending',
-                    expirationDate: { $gt: currentDate },
-                    bloodType: alternativeType
-                }).limit(amount);
-                return res.send({
-                    message: 'הסוג המבוקש אינו זמין, מוצע סוג חלופי.',
-                    alternativeType,
-                    bloodUnits: alternativeUnits,
-                    remainingAmount: alternativeUnits.length
-                });
-            } else {
-                return res.status(400).send(`יש במלאי רק ${totalAvailableAmount} מנות מסוג ${bloodType}.`);
-            }
+        if (totalAvailableUnits.length < amount) {
+            return res.status(400).send(`יש במלאי רק ${totalAvailableUnits.length} מנות מסוג ${bloodType}.`);
         }
 
-        // בחירת מנות הדם לניפוק
         const bloodUnitsToDispense = totalAvailableUnits.slice(0, amount);
         const bloodUnitIds = bloodUnitsToDispense.map(unit => unit._id);
 
-        // עדכון סטטוס המנות שננפקו
         await BloodUnit.updateMany({ _id: { $in: bloodUnitIds } }, { 
-            $set: { status: 'Rejected', requestDate: currentDate } 
+            $set: { status: 'Dispensed', requestDate: currentDate } 
         });
 
-        // חישוב כמות מנות הדם שנותרו לאחר הניפוק
-        const remainingAmount = totalAvailableAmount - amount;
+        // הוספת לוג
+        await logAction('Blood Units Dispensed', req.user._id, `Dispensed ${amount} units of ${bloodType}`);
 
-        // החזרת תגובה לניפוק מוצלח
-        return res.send({
-            message: 'המלאי המבוקש זמין וניפוק הצליח',
-            bloodUnits: bloodUnitsToDispense,
-            remainingAmount
-        });
-
+        return res.send({ message: 'ניפוק הדם הצליח', bloodUnits: bloodUnitsToDispense });
     } catch (error) {
         console.error('שגיאה בניפוק הדם:', error);
         return res.status(500).send('שגיאה בניפוק הדם');
@@ -478,6 +462,7 @@ router.get('/expiring-soon-report', async (req, res) => {
 const excel = require('exceljs'); // לספריית Excel
 const PdfPrinter = require('pdfmake');
 const path = require('path');
+const { Console } = require('console');
 
 // הגדרת הנתיב לגופנים שהורדת
 const fonts = {

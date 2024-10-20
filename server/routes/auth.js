@@ -53,7 +53,11 @@ router.post('/login', async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+        const token = jwt.sign(
+            { _id: user._id, username: user.username, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
         console.log('Generated token:', token); // ודא שהטוקן נוצר בהצלחה
 
         res.json({ token }); // שלח את הטוקן ל-Client

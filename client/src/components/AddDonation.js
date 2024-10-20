@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
-import { jwtDecode } from 'jwt-decode';
+
 function AddDonation() {
     const [message, setMessage] = useState('');
-    const [message2, setMessage2] = useState('');
     const [messageType, setMessageType] = useState('');
+    const [message2, setMessage2] = useState('');
     const [messageType2, setMessageType2] = useState('');
     const [isFieldsDisabled, setIsFieldsDisabled] = useState(true);
     const [formData, setFormData] = useState({
@@ -45,35 +45,38 @@ function AddDonation() {
                         bloodType: response.data.bloodType || formData.bloodType
                     });
                     setIsFieldsDisabled(true);
-                    setMessage2('התורם כבר קיים במערכת');
-                    setMessageType2('success');
+                    setMessage('התורם כבר קיים במערכת');
+                    setMessageType('success');
                 } else {
                     setIsFieldsDisabled(false);
-                    setMessage2('התורם לא נמצא במערכת, ניתן להזין פרטים');
-                    setMessageType2('error');
+                    setMessage('התורם לא נמצא במערכת, ניתן להזין פרטים');
+                    setMessageType('error');
                 }
             } catch (error) {
                 setIsFieldsDisabled(false);
-                setMessage2('שגיאה בבדיקה: התורם לא נמצא במערכת');
-                setMessageType2('error');
+                setMessage('שגיאה בבדיקה: התורם לא נמצא במערכת');
+                setMessageType('error');
             }
         } else {
-            setMessage2('יש להזין תעודת זהות לפני בדיקה');
-            setMessageType2('error');
+            setMessage('יש להזין תעודת זהות לפני בדיקה');
+            setMessageType('error');
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { bloodType, donationDate, donorId, donorName, age, units } = formData;
-        const token = localStorage.getItem('token');
-    
-        if (!token) {
-            setMessage('לא נמצא טוקן, אנא התחבר מחדש.');
-            setMessageType('error');
+        if (!bloodType || !donationDate || !donorId || !donorName || !age || !units || isNaN(units)) {
+            setMessage2('יש לוודא שכל השדות מלאים ותקינים');
+            setMessageType2('error');
             return;
         }
-    
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setMessage2('לא נמצא טוקן, אנא התחבר מחדש.');
+            setMessageType2('error');
+            return;
+        }
         try {
             // שליחת הבקשה עם ה-token בכותרת Authorization
             const response = await axios.post('http://localhost:3001/api/blood/donate', formData, {
@@ -81,20 +84,21 @@ function AddDonation() {
                     Authorization: `Bearer ${token}`
                 }
             });
-    
             if (response.status === 200 || response.status === 201) { // כולל גם סטטוס 201
-                setMessage('תרומה נרשמה בהצלחה');
-                setMessageType('success');
+                setMessage2('תרומה נרשמה בהצלחה');
+                setMessageType2('success');
+                return;
             } else {
-                setMessage('רישום התרומה נכשל, נסה שוב.');
-                setMessageType('error');
+                setMessage2('רישום התרומה נכשל, נסה שוב.');
+                setMessageType2('error');
+                return;
             }
-    
+
             resetForm();
         } catch (error) {
             const errorMessage = error.response && error.response.data ? error.response.data : 'שגיאה ברישום התרומה';
-            setMessage(errorMessage);
-            setMessageType('error');
+            setMessage2(errorMessage);
+            setMessageType2('error');
         }
     };
     
@@ -163,20 +167,21 @@ function AddDonation() {
                         <button type="submit" className="btn">הוסף תרומה</button>
                     </div>
                     <div className="message-container">
-                        {message2 && (
-                            <p className={`message ${messageType2}`}>
-                                {messageType2 === 'success' && <FaCheckCircle />}
-                                {messageType2 === 'error' && <FaExclamationCircle />}
-                                &nbsp; {message2}
-                            </p>
-                        )}
-                        {message && (
-                            <p className={`message ${messageType}`}>
-                                {messageType === 'success' && <FaCheckCircle />}
-                                {messageType === 'error' && <FaExclamationCircle />}
-                                &nbsp; {message}
-                            </p>
-                        )}
+                    {message && (
+        <p className={`message ${messageType}`}>
+            {messageType === 'success' && <FaCheckCircle />}
+            {messageType === 'error' && <FaExclamationCircle />}
+            &nbsp; {message}
+        </p>
+    )}
+    
+    {message2 && (
+        <p className={`message ${messageType2}`}>
+            {messageType2 === 'success' && <FaCheckCircle />}
+            {messageType2 === 'error' && <FaExclamationCircle />}
+            &nbsp; {message2}
+        </p>
+    )}
                     </div>
                 </form>
             </div>
