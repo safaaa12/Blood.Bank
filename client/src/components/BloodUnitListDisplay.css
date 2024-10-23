@@ -1,0 +1,118 @@
+.blood-unit-list-container{
+    padding: 20px;
+}
+.blood-unit-list-container-title {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    padding: 10px;
+    color: #000;
+  }
+  .blood-unit-list-container-title::after  {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #ded9d9; /* צבע הקו */
+    margin-top: 10px;
+    margin-left: 0px;
+  }
+.blood-unit-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align:center;
+    font-size: 16px;
+}
+
+.blood-unit-table th, .blood-unit-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.blood-unit-table th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.approve-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.reject-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.approved-label {
+    background-color: #ffeb3b;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.rejected-label {
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+/* BloodUnitListDisplay.css */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* רקע כהה */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.modal-actions button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #16a9d6;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-actions button:hover {
+    background-color: #1382ad;
+}
+
+.modal-actions button:nth-child(2) {
+    background-color: #ed1c24;
+}
+
+.modal-actions button:nth-child(2):hover {
+    background-color: #c2151a;
+}

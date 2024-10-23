@@ -1,3 +1,4 @@
+/* APP.CSS
 /* עיצוב כללי */
 .app-container {
   display: flex;
@@ -131,6 +132,7 @@ header .loginandsignup button:hover {
   background-color: #9a9998;
 }
 header .system-name {
+  display: flex;
   text-align: right;
   margin-right: 10px; /* רווח קטן מצד ימין */
   position: absolute;
@@ -143,15 +145,13 @@ header .system-name {
 /* עיצוב התוכן המרכזי */
 .container {
   display: flex;
-  flex-grow: 1;
   flex-direction: column;
   justify-content: center;
-  padding-right: 20px;
-  padding-left: 20px;
-  width: calc(100% - 240px); /* תופס את כל הרוחב הנותר */
+  width: 100%; /* תיקון הרוחב */
   height: calc(100vh - 74.5px); /* מתחשב בגובה ה-header */
-  overflow-y: auto; /* מוסיף גלילה במקרה של תוכן רב */
-  margin-right: 240px; /* מאפשר רווח לצד הסרגל הצדדי */
+  overflow-y: auto;
+  padding: 20px;
+  margin-right: 240px; /* שמירת רווח כדי לא להיכנס על ה-sidebar */
 }
 
 /* Responsive styling */
@@ -287,8 +287,7 @@ header .system-name {
 /*add add-donation*/
 .addDonationPage{
   height: calc(100vh - 74.5px); /* Ensure it fits in the viewport minus the header */
-  overflow: hidden; /* Disable vertical scroll */
-}
+ }
 .addDonation-container {
   margin: 50px auto;
   padding:10px;
@@ -371,4 +370,51 @@ header .system-name {
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
+}
+.logout-success-container ,.explanation-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f5f5f5; /* רקע בהיר */
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+.logout-success-container h1,.explanation-container h1 {
+  font-size: 2.8em;
+  color: #b71c1c; /* צבע אדום כהה */
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.logout-success-container p, .explanation-container p {
+  font-size: 1.2em;
+  color: #333;
+  margin-bottom: 20px;
+}
+.logout-success-container .auth-options, .explanation-container .auth-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.logout-success-container .auth-link  , .explanation-container .auth-link {
+  background-color: #b71c1c; /* צבע אדום כהה לכפתורים */
+  color: #fff;
+  padding: 12px 24px;
+  font-size: 1.2em;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.logout-success-container .auth-link:hover  ,.explanation-container .auth-link:hover {
+  background-color: #a50e0e; /* שינוי צבע hover */
+}
+
+.logout-success-container .auth-link:active ,.explanation-container .auth-link:active {
+  background-color: #8e0b0b; /* שינוי צבע כשנלחץ */
 }

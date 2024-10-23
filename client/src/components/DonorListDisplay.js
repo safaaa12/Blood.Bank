@@ -18,19 +18,9 @@ const DonorListDisplay = () => {
             });
     }, []);
 
-    const handleApprove = (donorId) => {
-        // לוגיקה לאישור תורם
-        console.log(`Approve donor: ${donorId}`);
-    };
-
-    const handleReject = (donorId) => {
-        // לוגיקה לדחיית תורם
-        console.log(`Reject donor: ${donorId}`);
-    };
-
     return (
         <div className="donor-list-container">
-            <h2>פרטי תרומות דם</h2>
+            <h2 className='donor-list-container-title'>רשימת התורמים במערכת </h2>
             {error ? ( // אם יש שגיאה, תוצג השגיאה על המסך
                 <p style={{ color: 'red' }}>שגיאה: {error}</p>
             ) : donors.length > 0 ? ( // אם יש תורמים, נציג אותם בטבלה
@@ -41,10 +31,6 @@ const DonorListDisplay = () => {
                             <th>מחלה</th>
                             <th>גיל</th>
                             <th>סוג דם</th>
-                            <th>יחידות</th>
-                            <th>תאריך בקשה</th>
-                            <th>סטטוס</th>
-                            <th>פעולה</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,22 +39,7 @@ const DonorListDisplay = () => {
                                 <td>{donor.donorName}</td>
                                 <td>{donor.disease || 'None'}</td>
                                 <td>{donor.age}</td>
-                                <td>{donor.bloodType}</td>
-                                <td>{donor.units}</td>
-                                <td>{new Date(donor.requestDate).toLocaleDateString('he-IL')}</td>
-                                <td>{donor.status}</td>
-                                <td>
-                                    {donor.status === 'Pending' ? (
-                                        <>
-                                            <button className="approve-btn" onClick={() => handleApprove(donor._id)}>אשר</button>
-                                            <button className="reject-btn" onClick={() => handleReject(donor._id)}>דחה</button>
-                                        </>
-                                    ) : donor.status === 'Approved' ? (
-                                        <span className="approved-label">{donor.units} יחידות נוספו למלאי</span>
-                                    ) : (
-                                        <span className="rejected-label">0 יחידות נוספו למלאי</span>
-                                    )}
-                                </td>
+                                <td>{donor.bloodType || 'None'}</td>
                             </tr>
                         ))}
                     </tbody>

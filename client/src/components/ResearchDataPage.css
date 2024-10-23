@@ -1,49 +1,60 @@
-/* ResearchDataPage.css */
-
-/* Container for the entire page */
-.container {
-  padding: 20px;
-  max-width: 900px;
-  margin: auto;
-}
-
-/* Style for the title */
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-/* Style for the table */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 30px;
-}
-
-table, th, td {
-  border: 1px solid #ddd;
-}
-
-th, td {
-  padding: 12px;
-  text-align: center;
-}
-
-thead {
-  background-color: #f4f4f4;
-}
-
-tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-tbody tr:hover {
-  background-color: #e0e0e0;
-}
-
-/* Style for the chart container */
-.chart-container {
+.research-data-container {
+  margin: 50px auto;
+  padding: 10px;
   display: flex;
-  justify-content: center;
-  margin-top: 30px;
+}
+.research-data {
+  margin: 50px auto;
+  padding: 10px;
+}
+.research-title {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding: 10px;
+  color: #000;
+}
+.research-title::after  {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #ded9d9; /* צבע הקו */
+  margin-top: 10px;
+  margin-left: 0px;
+}
+
+.blood-type-table {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+
+.blood-type-table th,
+.blood-type-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: right;
+}
+
+.blood-type-table th {
+  background-color: #b71c1c;
+  color: white;
+}
+
+.blood-type-table td {
+  background-color: #fff;
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 800px;
+  height: 400px;
+}
+
+.loader {
+  text-align: center;
+  font-size: 1.5em;
+  color: #b71c1c;
 }

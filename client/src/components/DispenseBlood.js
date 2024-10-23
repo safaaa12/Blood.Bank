@@ -14,40 +14,30 @@ function DispenseBlood() {
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setResponse(null);
         setAlternativeResponse(null);
         setError(null);
     
-        // ולידציה לסוג דם נבחר
-        if (!formData.bloodType) {
-            setError('יש לבחור סוג דם.');
-            return;
-        }
-    
-        // ולידציה לכמות המנות
-        if (formData.amount <= 0) {
-            setError('כמות חייבת להיות גדולה מאפס.');
-            return;
-        }
+        const token = localStorage.getItem('token'); // בהנחה שהטוקן שמור ב-localStorage
     
         try {
-            console.log("נשלחת בקשה לניפוק הדם עם הנתונים:", formData); // לוג לבדיקת הנתונים הנשלחים
-            const res = await axios.post('http://localhost:3001/api/blood/dispense', formData);
-            console.log("התקבלה תגובה מהשרת:", res.data);
-        
-            // בדיקה האם התקבל סוג דם חלופי
+            const res = await axios.post(
+                'http://localhost:3001/api/blood/dispense',
+                formData,
+                { headers: { Authorization: `Bearer ${token}` } } // הוספת הטוקן ל-Header
+            );
+            
             if (res.data.alternativeType) {
                 setAlternativeResponse(res.data);
             } else {
                 setResponse(res.data);
             }
         } catch (error) {
-            console.error("שגיאה במהלך ניפוק הדם:", error); // הצגת הודעת השגיאה
             if (error.response) {
-                console.error("שגיאה מהשרת:", error.response.data); // בדיקת שגיאה שהתקבלה מהשרת
-                setError(error.response.data); // הצגת שגיאה מהשרת למשתמש
+                setError(error.response.data);
             } else {
                 setError('שגיאה בניפוק הדם או אין מלאי זמין');
             }
@@ -75,48 +65,56 @@ function DispenseBlood() {
                     <button type="submit" className="btn">נפק דם</button>
                     
                     {/* הצגת הודעות שגיאה */}
-                    {error && (
-                        <div className="message error">
-                            {error}
+                    {error && <div className="message error">{error}</div>}
+
+                    {/* הצגת תוצאות הניפוק אם הצליח */}
+                    {response && (
+                        <div style={{ marginTop: "15px" }}>
+                            <h3>המלאי המבוקש זמין:</h3>
+                            <p>כמות נותרת: {response.remainingAmount}</p>
+                            <h4>פרטי תורמים:</h4>
+                            <ul>
+                                {response.bloodUnits.map(unit => (
+                                    <li key={unit._id}>
+                                        <p>תאריך תרומה: {new Date(unit.donationDate).toLocaleDateString()}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                            <ul>
+                                {response.bloodUnits.map(unit => (
+                                    <li key={unit._id}>
+                                        <p>תאריך תרומה: {new Date(unit.donationDate).toLocaleDateString()}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    {/* הצגת תוצאות אם הוצע סוג דם חלופי */}
+                    {alternativeResponse && (
+                        <div>
+                            <h3>המלצה לסוג דם חלופי:</h3>
+                            <p>הסוג המבוקש: {formData.bloodType} אינו זמין במלאי.</p>
+                            <p>המלצה: {alternativeResponse.alternativeType}</p>
+                            <p>כמות נותרת: {alternativeResponse.remainingAmount}</p>
+                            <h4>פרטי תורמים חלופיים:</h4>
+                            <ul>
+                                {alternativeResponse.bloodUnits.map(unit => (
+                                    <li key={unit._id}>
+                                        <p>תאריך תרומה: {new Date(unit.donationDate).toLocaleDateString()}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                            <ul>
+                                {alternativeResponse.bloodUnits.map(unit => (
+                                    <li key={unit._id}>
+                                        <p>תאריך תפוגה: {new Date(unit.expirationDate).toLocaleDateString()}</p>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     )}
                 </form>
-
-                {/* הצגת תוצאות הניפוק אם הצליח */}
-                {response && (
-                    <div>
-                        <h3>המלאי המבוקש זמין:</h3>
-                        <p>כמות נותרת: {response.remainingAmount}</p>
-                        <h4>פרטי תורמים:</h4>
-                        <ul>
-                            {response.bloodUnits.map(unit => (
-                                <li key={unit._id}>
-                                    <p>תאריך תרומה: {new Date(unit.donationDate).toLocaleDateString()}</p>
-                                    <p>תאריך תפוגה: {new Date(unit.expirationDate).toLocaleDateString()}</p>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-
-                {/* הצגת תוצאות אם הוצע סוג דם חלופי */}
-                {alternativeResponse && (
-                    <div>
-                        <h3>המלצה לסוג דם חלופי:</h3>
-                        <p>הסוג המבוקש: {formData.bloodType} אינו זמין במלאי.</p>
-                        <p>המלצה: {alternativeResponse.alternativeType}</p>
-                        <p>כמות נותרת: {alternativeResponse.remainingAmount}</p>
-                        <h4>פרטי תורמים חלופיים:</h4>
-                        <ul>
-                            {alternativeResponse.bloodUnits.map(unit => (
-                                <li key={unit._id}>
-                                    <p>תאריך תרומה: {new Date(unit.donationDate).toLocaleDateString()}</p>
-                                    <p>תאריך תפוגה: {new Date(unit.expirationDate).toLocaleDateString()}</p>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
             </div>
         </div>
     );

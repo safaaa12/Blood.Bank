@@ -2,7 +2,6 @@ const express = require('express');
 const { User } = require('../models/user'); // استخدام `User` هنا
 const jwt = require('jsonwebtoken');
 const ResearchData = require('../models/ResearchData'); // Path to the new model
-
 const bcrypt = require('bcryptjs');
 
 // Initialize express Router
@@ -41,29 +40,33 @@ router.post('/register', async (req, res) => {
 
 // Login route
 router.post('/login', async (req, res) => {
-  try {
-      let { email, password } = req.body;
-      email = email.trim().toLowerCase(); // Trim whitespace and convert to lowercase
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
 
-      console.log('Login attempt with:', { email, password });
+        if (!user) {
+            return res.status(400).json({ message: 'User not found' });
+        }
 
-      const user = await User.findOne({ email });
-      if (!user) {
-          return res.status(400).json({ message: 'Invalid email or password' });
-      }
+        const isMatch = await bcrypt.compare(password, user.password);
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-          return res.status(400).json({ message: 'Invalid email or password' });
-      }
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+        const token = jwt.sign(
+            { _id: user._id, username: user.username, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+        console.log('Generated token:', token); // ודא שהטוקן נוצר בהצלחה
 
-      const token = jwt.sign({ id: user._id }, process.env.JWTPRIVATEKEY, { expiresIn: '1h' });
-      res.status(200).json({ token });
-  } catch (error) {
-      console.error('Error during login:', error);
-      res.status(500).json({ message: 'Server error' });
-  }
+        res.json({ token }); // שלח את הטוקן ל-Client
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).send('Server error');
+    }
 });
+
 const authenticateToken = async (req, res, next) => {
     const token = req.headers['authorization']?.split(' ')[1]; // Extract token from Authorization header
 

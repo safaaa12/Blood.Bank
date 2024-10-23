@@ -7,20 +7,29 @@ function LoginPage({ onLogin }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:3001/api/auth/login', { email, password });
-            localStorage.setItem('email', email); // שמירת האימייל ב-localStorage
-            localStorage.setItem('token', response.data.token);
-            onLogin();
-            navigate('/');
+            console.log('Login response:', response.data); // בדוק את תגובת השרת
+    
+            if (response.data.token) {
+                localStorage.setItem('token', response.data.token); // שמור את הטוקן
+                console.log('Token saved:', localStorage.getItem('token')); // בדוק שהטוקן נשמר
+            } else {
+                console.error('No token found in the response');
+            }
+    
+            localStorage.setItem('email', email); // שמור את האימייל ב-localStorage
+            onLogin(); // קריאה לפונקציה אחרי התחברות מוצלחת
+            navigate('/'); // נווט לאחר ההתחברות
         } catch (err) {
             setError('אימייל או סיסמה שגויים');
         }
     };
-
+    
+    
+    
     return (
         <div className="login-page">
             <div className="login-container">
