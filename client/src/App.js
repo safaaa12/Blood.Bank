@@ -174,11 +174,6 @@ function App() {
                         <Route path="/BloodUnitListDisplay" element={<BloodUnitListDisplay />} /> {/* Route for the Explanation Page */}
                     </Routes>
                 </main>
-
-                {/* Footer Section */}
-                <footer className="footer">
-                   
-                </footer>
             </div>
         </Router>
     );

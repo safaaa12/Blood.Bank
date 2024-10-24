@@ -3,10 +3,6 @@ import axios from 'axios';
 import { FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 
 function AddDonation() {
-    const [message, setMessage] = useState('');
-    const [messageType, setMessageType] = useState('');
-    const [message2, setMessage2] = useState('');
-    const [messageType2, setMessageType2] = useState('');
     const [isFieldsDisabled, setIsFieldsDisabled] = useState(true);
     const [formData, setFormData] = useState({
         bloodType: '',
@@ -27,7 +23,7 @@ function AddDonation() {
     }, []);
 
     const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-    
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -45,21 +41,22 @@ function AddDonation() {
                         bloodType: response.data.bloodType || formData.bloodType
                     });
                     setIsFieldsDisabled(true);
-                    setMessage('התורם כבר קיים במערכת');
-                    setMessageType('success');
+                    alert(`התורם ${response.data.donorName} כבר קיים במערכת עם תעודת זהות ${formData.donorId}.
+                        לא ניתן לשנות פרטים אישיים כמו שם, גיל, ומחלות.
+                        ניתן להוסיף תרומות דם חדשות.
+                        אם הזנתם את התורם בטעות ורוצים להזין תורם אחר, אנא לחצו על כפתור האיפוס למטה כדי לאפס את השדות ולהזין פרטים חדשים.`);
+                        
                 } else {
                     setIsFieldsDisabled(false);
-                    setMessage('התורם לא נמצא במערכת, ניתן להזין פרטים');
-                    setMessageType('error');
+                    alert('התורם לא נמצא במערכת, ניתן להזין פרטים חדשים.');
                 }
             } catch (error) {
                 setIsFieldsDisabled(false);
-                setMessage('שגיאה בבדיקה: התורם לא נמצא במערכת');
-                setMessageType('error');
+                console.error('Error checking donor:', error);
+                alert('התורם לא נמצא במערכת, ניתן להזין פרטים חדשים.');
             }
         } else {
-            setMessage('יש להזין תעודת זהות לפני בדיקה');
-            setMessageType('error');
+            alert('יש להזין תעודת זהות לפני ביצוע הבדיקה.');
         }
     };
 
@@ -67,14 +64,12 @@ function AddDonation() {
         e.preventDefault();
         const { bloodType, donationDate, donorId, donorName, age, units } = formData;
         if (!bloodType || !donationDate || !donorId || !donorName || !age || !units || isNaN(units)) {
-            setMessage2('יש לוודא שכל השדות מלאים ותקינים');
-            setMessageType2('error');
+            alert('יש לוודא שכל השדות מלאים ותקינים.');
             return;
         }
         const token = localStorage.getItem('token');
         if (!token) {
-            setMessage2('לא נמצא טוקן, אנא התחבר מחדש.');
-            setMessageType2('error');
+            alert('לא נמצא טוקן, אנא התחבר מחדש.');
             return;
         }
         try {
@@ -85,20 +80,25 @@ function AddDonation() {
                 }
             });
             if (response.status === 200 || response.status === 201) { // כולל גם סטטוס 201
-                setMessage2('תרומה נרשמה בהצלחה');
-                setMessageType2('success');
+                alert('🟢התרומה נרשמה בהצלחה👍');
+                resetForm();
                 return;
             } else {
-                setMessage2('רישום התרומה נכשל, נסה שוב.');
-                setMessageType2('error');
+                alert('רישום התרומה נכשל, נא לנסות שוב.');
                 return;
             }
 
-            resetForm();
         } catch (error) {
-            const errorMessage = error.response && error.response.data ? error.response.data : 'שגיאה ברישום התרומה';
-            setMessage2(errorMessage);
-            setMessageType2('error');
+            console.error('Error submitting donation:', error);
+            if (error.response && error.response.status === 400) {
+                alert('בקשה לא תקינה, יש לבדוק את הנתונים שהוזנו.');
+            } else if (error.response && error.response.status === 401) {
+                alert('טוקן לא תקין או פג תוקף, נא התחבר מחדש.');
+            } else if (error.response && error.response.status === 500) {
+                alert('שגיאה בשרת, נא לנסות שוב מאוחר יותר.');
+            } else {
+                alert('שגיאה ברישום התרומה, נא לבדוק את החיבור ולנסות שוב.');
+            }
         }
     };
     
@@ -112,9 +112,6 @@ function AddDonation() {
             disease: '',
             units: ''
         });
-        setIsFieldsDisabled(true);
-        setMessage('');
-        setMessage2('');
     };
 
     return (
@@ -125,6 +122,10 @@ function AddDonation() {
                     <small className="field-explanation">
                         אנא הזן את מספר תעודת הזהות של התורם ולחץ על כפתור הבדיקה כדי לבדוק אם התורם קיים במערכת.
                     </small>
+                    <div className="btn-reset" onClick={resetForm}style={{ alignItems: 'center', 
+                            justifyContent: 'center', padding: '5px 1px', borderRadius: '5px',
+                             cursor: 'pointer', fontSize: '16px', fontWeight: 'bold'}}>🔄אפס שדות</div>
+                             
                     <div className="form-group">
                         <label>מספר ת"ז של התורם:</label>
                         <input type="text" name="donorId" value={formData.donorId} onChange={handleChange} />
@@ -162,26 +163,11 @@ function AddDonation() {
                         <label>מספר יחידות דם:</label>
                         <input type="number" name="units" value={formData.units} onChange={handleChange} />
                     </div>
-                    <div className="btn-reset" onClick={resetForm}>🔄אפס שדות</div>
                     <div className="form-buttons">
                         <button type="submit" className="btn">הוסף תרומה</button>
                     </div>
                     <div className="message-container">
-                    {message && (
-        <p className={`message ${messageType}`}>
-            {messageType === 'success' && <FaCheckCircle />}
-            {messageType === 'error' && <FaExclamationCircle />}
-            &nbsp; {message}
-        </p>
-    )}
-    
-    {message2 && (
-        <p className={`message ${messageType2}`}>
-            {messageType2 === 'success' && <FaCheckCircle />}
-            {messageType2 === 'error' && <FaExclamationCircle />}
-            &nbsp; {message2}
-        </p>
-    )}
+
                     </div>
                 </form>
             </div>

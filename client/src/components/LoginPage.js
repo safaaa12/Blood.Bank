@@ -24,7 +24,7 @@ function LoginPage({ onLogin }) {
             onLogin(); // קריאה לפונקציה אחרי התחברות מוצלחת
             navigate('/'); // נווט לאחר ההתחברות
         } catch (err) {
-            setError('אימייל או סיסמה שגויים');
+            setError('❎ אימייל או סיסמה שגויים');
         }
     };
     

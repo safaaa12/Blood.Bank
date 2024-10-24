@@ -139,58 +139,49 @@ router.post('/reject', async (req, res) => {
 });
 router.post('/dispense', authenticateToken, async (req, res) => { 
     const { bloodType, amount } = req.body;
+
+    if (!bloodType || !amount || isNaN(amount) || amount <= 0) {
+        return res.status(400).send('אנא ספק סוג דם וכמות חוקית.');
+    }
+
     try {
         const currentDate = new Date();
 
+        // חיפוש המנות בסדר של תוקפן הקרוב ביותר
         const totalAvailableUnits = await BloodUnit.find({
             status: 'Pending',
             expirationDate: { $gt: currentDate },
             bloodType: bloodType
-        });
+        }).sort({ expirationDate: 1 });
 
+        // בדיקה אם יש מספיק מנות זמינות
         if (totalAvailableUnits.length < amount) {
             return res.status(400).send(`יש במלאי רק ${totalAvailableUnits.length} מנות מסוג ${bloodType}.`);
         }
 
+        // בחירת המנות לניפוק
         const bloodUnitsToDispense = totalAvailableUnits.slice(0, amount);
         const bloodUnitIds = bloodUnitsToDispense.map(unit => unit._id);
 
+        // עדכון הסטטוס ל-"Dispensed"
         await BloodUnit.updateMany({ _id: { $in: bloodUnitIds } }, { 
             $set: { status: 'Dispensed', requestDate: currentDate } 
         });
 
         // הוספת לוג
-        await logAction('Blood Units Dispensed', req.user._id, `Dispensed ${amount} units of ${bloodType}`);
-
-        return res.send({ message: 'ניפוק הדם הצליח', bloodUnits: bloodUnitsToDispense });
+        await logAction('Blood Units Dispensed', req.user.username, req.user.role, `Dispensed ${amount} units of ${bloodType}`);
+        const remainingAmount = totalAvailableUnits.length - amount;
+return res.send({ 
+    message: 'ניפוק הדם הצליח', 
+    bloodUnits: bloodUnitsToDispense,
+    remainingAmount
+});
     } catch (error) {
         console.error('שגיאה בניפוק הדם:', error);
         return res.status(500).send('שגיאה בניפוק הדם');
     }
 });
 
-// פונקציה למציאת סוג דם חלופי
-const findAlternativeBloodType = async (bloodType) => {
-    const alternativeMap = {
-        'A+': ['O+', 'A-'],
-        'A-': ['O-'],
-        'B+': ['O+', 'B-'],
-        'B-': ['O-'],
-        'AB+': ['A+', 'B+', 'O+', 'AB-'],
-        'AB-': ['A-', 'B-', 'O-'],
-        'O+': ['O-'],
-        'O-': []
-    };
-    
-    const alternatives = alternativeMap[bloodType];
-    for (const altType of alternatives) {
-        const availableUnits = await BloodUnit.countDocuments({ bloodType: altType, status: 'Pending' });
-        if (availableUnits > 0) {
-            return altType; // החזרת סוג הדם החלופי אם קיים
-        }
-    }
-    return null; // אין סוג דם חלופי
-};
 
 // Route for emergency dispensing
 router.post('/emergency-dispense', async (req, res) => {
@@ -298,38 +289,6 @@ router.get('/donors', async (req, res) => {
     }
 });
 
-// פונקציה לשליפת תרומות שתפוגתן קרבה
-async function getExpiringDonations() {
-    const expirationDays = 5; // מספר הימים עד שתפוגת התרומה קרבה
-    const currentDate = new Date();
-
-    // חישוב התאריך שבו תפוגת התרומה מתקרבת (5 ימים קדימה)
-    const notificationDate = new Date();
-    notificationDate.setDate(currentDate.getDate() + expirationDays);
-
-    try {
-        // שליפת יחידות דם שתפוגתן תסתיים תוך 5 ימים
-        const soonToExpireDonations = await BloodUnit.find({
-            expirationDate: { $lte: notificationDate, $gt: currentDate }
-        }).populate('donor');
-
-        return soonToExpireDonations;
-    } catch (error) {
-        console.error('Error fetching expiring donations:', error);
-        throw error;
-    }
-}
-
-// נתיב לשליחת התרומות שתוקפן יפוג בקרוב
-router.get('/notify-expiring-donations', async (req, res) => {
-    try {
-        const soonToExpireDonations = await getExpiringDonations();
-        res.json({ soonToExpireDonations });
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching expiring donations' });
-    }
-});
-
 // נתיב לחישוב כמות יחידות הדם לפי סוג דם
 router.get('/bloodTypeCounts', async (req, res) => {
     try {
@@ -406,37 +365,6 @@ router.delete('/units/:id', async (req, res) => {
     } catch (error) {
         console.error('Error deleting blood unit:', error);
         res.status(500).send('שגיאה במחיקת יחידת הדם');
-    }
-});
-// פונקציה לשליפת תרומות שתפוגתן קרבה
-async function getExpiringDonations() {
-    const expirationDays = 5; // מספר הימים עד שתפוגת התרומה קרבה
-    const currentDate = new Date();
-
-    // חישוב התאריך שבו תפוגת התרומה מתקרבת (5 ימים קדימה)
-    const notificationDate = new Date();
-    notificationDate.setDate(currentDate.getDate() + expirationDays);
-
-    try {
-        // שליפת יחידות דם שתפוגתן תסתיים תוך 5 ימים
-        const soonToExpireDonations = await BloodUnit.find({
-            expirationDate: { $lte: notificationDate, $gt: currentDate }
-        }).populate('donor');
-
-        return soonToExpireDonations;
-    } catch (error) {
-        console.error('Error fetching expiring donations:', error);
-        throw error;
-    }
-}
-
-// נתיב לשליחת התרומות שתוקפן יפוג בקרוב
-router.get('/notify-expiring-donations', async (req, res) => {
-    try {
-        const soonToExpireDonations = await getExpiringDonations();
-        res.json({ soonToExpireDonations });
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching expiring donations' });
     }
 });
 
@@ -661,322 +589,5 @@ router.get('/download-full-donor-report', async (req, res) => {
         res.status(500).json({ message: 'Error generating report' });
     }
 });
-
-// Route for rejecting a blood donation
-router.post('/reject', async (req, res) => {
-    const { bloodUnitId } = req.body; // מזהה יחידת דם
-
-    try {
-        const bloodUnit = await BloodUnit.findById(bloodUnitId);
-        if (!bloodUnit) {
-            return res.status(404).send('לא נמצאה יחידת דם עם מזהה זה.');
-        }
-
-        bloodUnit.status = 'Rejected'; // עדכון סטטוס לדחייה
-        await bloodUnit.save();
-
-        res.send({ message: 'התרומה נדחתה בהצלחה', bloodUnit });
-    } catch (error) {
-        console.error('Error rejecting donation:', error);
-        res.status(500).send('שגיאה בדחיית התרומה');
-    }
-});
-router.post('/dispense', async (req, res) => { 
-    const { bloodType, amount } = req.body;
-    try {
-        const currentDate = new Date();
-        const bloodUnits = await BloodUnit.find({ 
-            status: 'Pending', 
-            expirationDate: { $gt: currentDate }, // לוודא שהדם לא פג תוקף
-            bloodType: bloodType // חיפוש לפי סוג הדם
-        })
-        .limit(amount);
-        const availableAmount = bloodUnits.length;
-        // אם אין מספיק יחידות במלאי, החזר שגיאה
-        if (availableAmount < amount) {
-            return res.status(400).send(`יש במלאי רק ${availableAmount} מנות מסוג זה.`);
-        }
-
-        // עדכון הסטטוס ותאריך הבקשה לכל יחידה שננפקת
-        const bloodUnitIds = bloodUnits.map(unit => unit._id);
-        await BloodUnit.updateMany({ _id: { $in: bloodUnitIds } }, { 
-            $set: { status: 'Rejected', requestDate: currentDate } 
-        });
-
-        // החזרת תגובה על הניפוק המוצלח
-        return res.send({
-            message: 'המלאי המבוקש זמין וניפוק הצליח',
-            bloodUnits,
-            remainingAmount: availableAmount - amount
-        });
-
-    } catch (error) {
-        console.error('שגיאה בניפוק הדם:', error);
-        res.status(500).send('שגיאה בניפוק הדם');
-    }
-});
-// Route for emergency dispensing
-router.post('/emergency-dispense', async (req, res) => {
-    const { amount } = req.body;
-    try {
-        // חיפוש יחידות דם מאושרות מסוג O-
-        const bloodUnits = await BloodUnit.find({
-            status: 'Pending',
-            bloodType: 'O-', // חיפוש ישיר לפי סוג הדם
-            expirationDate: { $gt: new Date() } // לוודא שהיחידות לא פגו תוקפן
-        })
-        .sort({ donationDate: 1 }) // סידור לפי תאריך התרומה
-        .limit(amount); // הגבלת הכמות לפי בקשת המשתמש
-
-        // בדיקת זמינות במלאי
-        if (bloodUnits.length === 0) {
-            return res.status(400).send('אין מלאי דם מסוג O- זמין.');
-        } else if (bloodUnits.length < amount) {
-            return res.status(400).send(`זמינים רק ${bloodUnits.length} מנות דם מסוג O- במלאי.`);
-        }
-
-        // עדכון סטטוס לכל יחידות הדם שמנופקות
-        const bloodUnitIds = bloodUnits.map(unit => unit._id);
-        await BloodUnit.updateMany({ _id: { $in: bloodUnitIds } }, {
-            $set: { status: 'Rejected', requestDate: new Date() } 
-        });
-
-        // חישוב כמות המנות שנותרו לאחר הניפוק
-        const remainingAmount = await BloodUnit.countDocuments({
-            status: 'Pending',
-            bloodType: 'O-', 
-            expirationDate: { $gt: new Date() } // ספירה רק של מנות לא פגות תוקף
-        });
-
-        // החזרת תגובה על הניפוק המוצלח
-        res.send({
-            message: 'הוצאו מנות דם מסוג O- בהצלחה',
-            bloodUnits,
-            remainingAmount
-        });
-    } catch (error) {
-        console.error('Error during emergency dispense:', error);
-        res.status(500).send('שגיאה בניפוק הדם לחירום');
-    }
-});
-
-// Route for statistics (accessible only by students)
-router.get('/stats', async (req, res) => {
-    try {
-        const totalDonations = await Donor.countDocuments();
-        const totalDonors = await Donor.distinct('donorId').countDocuments(); // Count unique donors
-        const emergencyDispenseCount = await Donor.countDocuments({ bloodType: 'O-' }); // Example count for emergency dispense
-        const bloodTypeCounts = await Donor.aggregate([
-            { $group: { _id: "$bloodType", count: { $sum: 1 } } }
-        ]);
-        res.json({
-            bloodTypeCounts,
-            totalDonations,
-            totalDonors,
-            emergencyDispense: emergencyDispenseCount
-        });
-    } catch (error) {
-        console.error('Error fetching statistics:', error.message);
-        res.status(500).json({ message: 'Error fetching statistics' });
-    }
-});
-
-// Route for fetching meta data (accessible only by admins)
-router.get('/meta', async (req, res) => {
-    try {
-        const totalBloodUnits = await Donor.countDocuments();
-        const totalDonors = await Donor.distinct('donorId').countDocuments();
-        const recentDispenses = await Donor.aggregate([
-            { $match: {} },
-            { $group: { _id: null, recentDispenseCount: { $sum: 1 } } }
-        ]);
-
-        res.json({
-            totalBloodUnits,
-            totalDonors,
-            recentDispenses: recentDispenses.length > 0 ? recentDispenses[0].recentDispenseCount : 0
-        });
-    } catch (error) {
-        console.error('Error fetching meta data:', error.message);
-        res.status(500).json({ message: 'Error fetching meta data' });
-    }
-});
-
-// Route to get all donors
-router.get('/donors', async (req, res) => {
-    console.log('Request received for fetching donors');  // לוג לבדיקת קבלת הבקשה
-    try {
-        const donors = await Donor.find({});
-        res.json(donors);
-    } catch (error) {
-        console.error('Error fetching donors:', error);
-        res.status(500).send('שגיאה בשליפת התורמים');
-    }
-});
-
-// פונקציה לשליפת תרומות שתפוגתן קרבה
-async function getExpiringDonations() {
-    const expirationDays = 5; // מספר הימים עד שתפוגת התרומה קרבה
-    const currentDate = new Date();
-
-    // חישוב התאריך שבו תפוגת התרומה מתקרבת (5 ימים קדימה)
-    const notificationDate = new Date();
-    notificationDate.setDate(currentDate.getDate() + expirationDays);
-
-    try {
-        // שליפת יחידות דם שתפוגתן תסתיים תוך 5 ימים
-        const soonToExpireDonations = await BloodUnit.find({
-            expirationDate: { $lte: notificationDate, $gt: currentDate }
-        }).populate('donor');
-
-        return soonToExpireDonations;
-    } catch (error) {
-        console.error('Error fetching expiring donations:', error);
-        throw error;
-    }
-}
-
-// נתיב לשליחת התרומות שתוקפן יפוג בקרוב
-router.get('/notify-expiring-donations', async (req, res) => {
-    try {
-        const soonToExpireDonations = await getExpiringDonations();
-        res.json({ soonToExpireDonations });
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching expiring donations' });
-    }
-});
-
-// נתיב לחישוב כמות יחידות הדם לפי סוג דם
-router.get('/bloodTypeCounts', async (req, res) => {
-    try {
-        const bloodTypeCounts = await BloodUnit.aggregate([
-            {
-                $group: {
-                    _id: "$bloodType", // קיבוץ לפי סוג הדם של יחידת הדם
-                    count: { $sum: 1 } // ספירת כמות יחידות הדם
-                }
-            }
-        ]);
-        res.json(bloodTypeCounts);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching blood type counts' });
-    }
-});
-router.get('/donations/today', async (req, res) => {
-    try {
-        // קבלת תאריך התחלה וסוף עבור היום הנוכחי (מחצות ועד עכשיו)
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0); // תחילת היום (00:00:00)
-        
-        const endOfDay = new Date(); // סיום היום (התאריך והשעה הנוכחית)
-
-        // שאילתה שמוצאת תורמים שתרמו היום
-        const donationsToday = await BloodUnit.find({
-            donationDate: { $gte: startOfDay, $lte: endOfDay }
-        }).populate('donor'); // טוענים את פרטי התורמים
-
-        // חישוב כמות התורמים הייחודיים
-        const uniqueDonorsToday = new Set(donationsToday.map(unit => unit.donor._id));
-        const countDonors = uniqueDonorsToday.size;
-
-        res.json({
-            totalDonatedToday: donationsToday.length, // סך כל התרומות
-            totalDonorsToday: countDonors // כמות התורמים הייחודיים
-        });
-    } catch (error) {
-        console.error('Error fetching today\'s donations:', error);
-        res.status(500).send('שגיאה בשליפת תרומות היום.');
-    }
-});
-
-// Route for emergency dispensing
-router.post('/emergency-dispense', async (req, res) => {
-    const { amount } = req.body;
-    try {
-        const donors = await Donor.find({ bloodType: 'O-' }).sort({ donationDate: 1 }).limit(amount);
-        console.log('Found donors:', donors);
-
-        if (donors.length === 0) {
-            console.log('No O- donors found');
-            return res.status(400).send('אין מלאי דם מסוג O- זמין.');
-        } else if (donors.length < amount) {
-            console.log('Not enough O- donors found');
-            return res.status(400).send(`זמינים רק ${donors.length} מנות דם מסוג O- במלאי.`);
-        }
-
-        const donorIds = donors.map(donor => donor._id);
-        console.log('Donor IDs to delete:', donorIds);
-
-        await Donor.deleteMany({ _id: { $in: donorIds } });
-
-        const remainingAmount = await Donor.countDocuments({ bloodType: 'O-' });
-        console.log('Remaining O- donors:', remainingAmount);
-
-        res.send({
-            message: 'הוצאו מנות דם מסוג O- בהצלחה',
-            donors,
-            remainingAmount
-        });
-    } catch (error) {
-        console.error('Error during emergency dispense:', error);
-        res.status(500).send('שגיאה בניפוק הדם לחירום');
-    }
-});
-
-// Route for statistics (accessible only by students)
-// Route for statistics (accessible only by students)
-router.get('/stats', async (req, res) => {
-    try {
-        const totalDonations = await Donor.countDocuments();
-        const totalDonors = await Donor.distinct('donorId').countDocuments(); // Count unique donors
-        const emergencyDispenseCount = await Donor.countDocuments({ bloodType: 'O-' }); // Example count for emergency dispense
-        const bloodTypeCounts = await Donor.aggregate([
-            { $group: { _id: "$bloodType", count: { $sum: 1 } } }
-        ]);
-        res.json({
-            bloodTypeCounts,
-            totalDonations,
-            totalDonors,
-            emergencyDispense: emergencyDispenseCount
-        });
-    } catch (error) {
-        console.error('Error fetching statistics:', error.message);
-        res.status(500).json({ message: 'Error fetching statistics' });
-    }
-});
-
-// Route for fetching meta data (accessible only by admins)
-router.get('/meta', async (req, res) => {
-    try {
-        const totalBloodUnits = await Donor.countDocuments();
-        const totalDonors = await Donor.distinct('donorId').countDocuments();
-        const recentDispenses = await Donor.aggregate([
-            { $match: {} },
-            { $group: { _id: null, recentDispenseCount: { $sum: 1 } } }
-        ]);
-
-        res.json({
-            totalBloodUnits,
-            totalDonors,
-            recentDispenses: recentDispenses.length > 0 ? recentDispenses[0].recentDispenseCount : 0
-        });
-    } catch (error) {
-        console.error('Error fetching meta data:', error.message);
-        res.status(500).json({ message: 'Error fetching meta data' });
-    }
-});
-
-// Route to get all donors
-router.get('/donors', async (req, res) => {
-    console.log('Request received for fetching donors');  // לוג לבדיקת קבלת הבקשה
-    try {
-        const donors = await Donor.find({});
-        res.json(donors);
-    } catch (error) {
-        console.error('Error fetching donors:', error);
-        res.status(500).send('שגיאה בשליפת התורמים');
-    }
-});
-
 
 module.exports = router;

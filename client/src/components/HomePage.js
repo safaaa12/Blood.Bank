@@ -95,13 +95,19 @@ const HomePage = () => {
             document.body.removeChild(link);
         } catch (error) {
             console.error('Error downloading report:', error);
-            alert('שגיאה בהורדת הדוח');
+            if (error.response && error.response.status === 404) {
+                alert('אין יחידות דם שתפוגתן קרובה במערכת.');
+            } else if (error.response && error.response.status === 500) {
+                alert('שגיאה בשרת, נא לנסות שוב מאוחר יותר.');
+            } else {
+                alert('שגיאה בהורדת הדוח. נא לבדוק את החיבור.');
+            }
         }
     };
     const downloadAllDonations = async (format) => {
         try {
-            const response = await axios.get(`http://localhost:3001/api/blood/download-full-donor-report?format=${format}`, {
-                responseType: 'blob', // קבלת התגובה כקובץ
+            const response = await axios.get(`http://localhost:3001/api/blood/download-expiring-report?format=${format}`, {
+                responseType: 'blob', // חשוב לוודא שהתגובה היא קובץ בינארי
             });
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
@@ -112,7 +118,13 @@ const HomePage = () => {
             document.body.removeChild(link);
         } catch (error) {
             console.error('Error downloading report:', error);
-            alert('שגיאה בהורדת הדוח');
+            if (error.response && error.response.status === 404) {
+                alert('אין יחידות דם שתפוגתן קרובה במערכת.');
+            } else if (error.response && error.response.status === 500) {
+                alert('שגיאה בשרת, נא לנסות שוב מאוחר יותר.');
+            } else {
+                alert('שגיאה בהורדת הדוח. נא לבדוק את החיבור.');
+            }
         }
     };
     
